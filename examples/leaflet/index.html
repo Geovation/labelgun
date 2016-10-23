@@ -1,0 +1,97 @@
+<!-- <doctype html> -->
+<html>
+  <head>
+    <style>
+      html, body, #map {
+        width: 100%;
+        height: 100%;
+        padding: 0px;
+        margin: 0px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <script src="../../../node_modules/systemjs/dist/system.js"></script>
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+    <script>
+
+      console.log("Leaflet Demo");
+
+      // Confiure location of necessary modules
+      SystemJS.config({
+        map : {
+          rbush : "/../../node_modules/rbush/rbush.js",
+          labelgun : "/../../lib/labelgun.js"
+        }
+      });
+
+      SystemJS.import('fetch');
+      SystemJS.import('labelgun').then(function(labelgun) {
+
+
+        // Leaflet map
+        var map = L.map('map').setView([0, 0], 6);
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Labelgun!
+        var hideLabel = function(){console.log("Hide")};
+        var showLabel = function(){console.log("Show")};
+        var labelEngine = new labelgun.default(hideLabel, showLabel);
+
+        console.log(fetch);
+        var id = 0;
+        fetch("../geojson/cupcakes.geojson")
+          .then(function(response){ return response.json()})
+          .then(function(geojson){
+            var markers = L.geoJSON(geojson, {
+              onEachFeature : function(feature, layer) {
+                layer.bindTooltip("Test", {permanent: true}).openTooltip();
+                layer.addTo(map);
+
+                setTimeout(function(){
+                  var label = layer.getTooltip()._source._tooltip._container;
+                  var rect = label.getBoundingClientRect();
+                  //console.log(rect)
+                  var bottomLeft = [rect.left, rect.bottom];
+                  var topRight = [rect.right, rect.top];
+                  bottomLeft = map.containerPointToLatLng(bottomLeft);
+                  topRight = map.containerPointToLatLng(topRight);
+                  //console.log(label.offsetTop, bottomLeft, topRight)
+                  var boundingBox = {
+                      bottomLeft : [bottomLeft.lng, bottomLeft.lat],
+                      topRight   : [topRight.lng, topRight.lat]
+                  };
+
+                  id++;
+                  // console.log()
+                  labelEngine._prioritiseLabel(
+                    boundingBox,
+                    id,
+                    1,
+                    label,
+                    "Test",
+                    false
+                  )
+                }, 0);
+
+                console.log(labelEngine.allLabels);
+              }
+            }).addTo(map)
+
+            map.fitBounds(markers.getBounds());
+
+          });
+
+
+        console.log(labelgun.default);
+
+      });
+
+    </script>
+  </body>
+</html>
