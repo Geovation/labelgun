@@ -67,7 +67,7 @@ export default class labelgun {
 
   /**
    * @name _setupLabelStates
-   * @summary Clears current tree and readds all stations from Podaris.Station
+   * @summary Clears current tree and readds all stations
    * @returns {undefined}
    * @private
    */
@@ -161,6 +161,7 @@ export default class labelgun {
    * @private
    */
   removeFromTree(label, forceUpdate) {
+    console.log("removeFromTree")
     const id = label.id || label;
     const removelLabel = this.allLabels[id];
     this.tree.remove(removelLabel);
@@ -176,6 +177,7 @@ export default class labelgun {
    * @private
    */
   _addToTree(label) {
+    console.log("adding to tree")
     this.allLabels[label.id] = label;
     this.tree.insert(label);
   }
@@ -215,6 +217,8 @@ export default class labelgun {
     }, this);
 
     highest.state = "show";
+    //
+    // console.log(highest)
     if (originalWeight) highest.weight = originalWeight;
   }
 
@@ -309,6 +313,7 @@ export default class labelgun {
     }
 
     this._throttledHandleCollisions(collisions, label, isDragged, 1000);
+    console.log(this.allLabels);
   }
 
   labelHasChanged(id) {

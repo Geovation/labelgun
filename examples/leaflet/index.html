@@ -39,8 +39,8 @@
         }).addTo(map);
 
         // Labelgun!
-        var hideLabel = function(){console.log("Hide")};
-        var showLabel = function(){console.log("Show")};
+        var hideLabel = function(label){label.labelObject.style.display = "none";};
+        var showLabel = function(label){label.labelObject.style.display = "block";};
         var labelEngine = new labelgun.default(hideLabel, showLabel);
 
         console.log(fetch);
@@ -50,45 +50,47 @@
           .then(function(geojson){
             var markers = L.geoJSON(geojson, {
               onEachFeature : function(feature, layer) {
-                layer.bindTooltip("Test", {permanent: true}).openTooltip();
-                layer.addTo(map);
 
-                setTimeout(function(){
+                layer.bindTooltip("Test", {permanent: true}).openTooltip();
+                layer.on("add", function(){
+
+                  id++
                   var label = layer.getTooltip()._source._tooltip._container;
+                  console.log(label);
                   var rect = label.getBoundingClientRect();
-                  //console.log(rect)
+
                   var bottomLeft = [rect.left, rect.bottom];
                   var topRight = [rect.right, rect.top];
                   bottomLeft = map.containerPointToLatLng(bottomLeft);
                   topRight = map.containerPointToLatLng(topRight);
-                  //console.log(label.offsetTop, bottomLeft, topRight)
+
                   var boundingBox = {
                       bottomLeft : [bottomLeft.lng, bottomLeft.lat],
                       topRight   : [topRight.lng, topRight.lat]
                   };
 
-                  id++;
-                  // console.log()
                   labelEngine._prioritiseLabel(
                     boundingBox,
                     id,
-                    1,
+                    Math.random() * (5 - 1) + 1, // Weight
                     label,
-                    "Test",
+                    "Test " + id,
                     false
                   )
-                }, 0);
+                })
+                layer.addTo(map);
+                labelEngine.labelHasChanged(id);
 
-                console.log(labelEngine.allLabels);
               }
             }).addTo(map)
 
             map.fitBounds(markers.getBounds());
 
+            console.log("ALL ADDED");
+            labelEngine.forceLabelStates(true);
+
+
           });
-
-
-        console.log(labelgun.default);
 
       });
 
