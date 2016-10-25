@@ -39,11 +39,10 @@
         }).addTo(map);
 
         // Labelgun!
-        var hideLabel = function(label){label.labelObject.style.display = "none";};
-        var showLabel = function(label){label.labelObject.style.display = "block";};
+        var hideLabel = function(label){ label.labelObject.style.opacity = 0;};
+        var showLabel = function(label){ label.labelObject.style.opacity = 1;};
         var labelEngine = new labelgun.default(hideLabel, showLabel);
 
-        console.log(fetch);
         var id = 0;
         fetch("../geojson/cupcakes.geojson")
           .then(function(response){ return response.json()})
@@ -51,43 +50,47 @@
             var markers = L.geoJSON(geojson, {
               onEachFeature : function(feature, layer) {
 
-                layer.bindTooltip("Test", {permanent: true}).openTooltip();
-                layer.on("add", function(){
+                    layer.bindTooltip("Test ", {permanent: true});
+                    
+                    setTimeout(function(){
 
-                  id++
-                  var label = layer.getTooltip()._source._tooltip._container;
-                  console.log(label);
-                  var rect = label.getBoundingClientRect();
+                      id++
 
-                  var bottomLeft = [rect.left, rect.bottom];
-                  var topRight = [rect.right, rect.top];
-                  bottomLeft = map.containerPointToLatLng(bottomLeft);
-                  topRight = map.containerPointToLatLng(topRight);
+                      var label = layer.getTooltip()._source._tooltip._container;
+                      var rect = label.getBoundingClientRect();
 
-                  var boundingBox = {
-                      bottomLeft : [bottomLeft.lng, bottomLeft.lat],
-                      topRight   : [topRight.lng, topRight.lat]
-                  };
+                      var bottomLeft = [rect.left, rect.bottom];
+                      var topRight = [rect.right, rect.top];
 
-                  labelEngine._prioritiseLabel(
-                    boundingBox,
-                    id,
-                    Math.random() * (5 - 1) + 1, // Weight
-                    label,
-                    "Test " + id,
-                    false
-                  )
-                })
-                layer.addTo(map);
-                labelEngine.labelHasChanged(id);
+                      bottomLeft = map.containerPointToLatLng(bottomLeft);
+                      topRight = map.containerPointToLatLng(topRight);
+
+                      var boundingBox = {
+                          bottomLeft : [bottomLeft.lng, bottomLeft.lat],
+                          topRight   : [topRight.lng, topRight.lat]
+                      };
+
+                      labelEngine._prioritiseLabel(
+                        boundingBox,
+                        id,
+                        parseInt(Math.random() * (5 - 1) + 1), // Weight
+                        label,
+                        "Test " + id,
+                        false
+                      )
+                      layer.addTo(map);
+
+                    },0);
 
               }
             }).addTo(map)
 
             map.fitBounds(markers.getBounds());
 
-            console.log("ALL ADDED");
-            labelEngine.forceLabelStates(true);
+            setTimeout(function(){
+              labelEngine.hasZoomed = true;
+              labelEngine.forceLabelStates(true);
+            }, 100)
 
 
           });
