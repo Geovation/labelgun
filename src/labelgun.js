@@ -145,7 +145,7 @@ export default class labelgun {
       maxY: boundingBox.topRight[1],
       state: "hide",
       id : id,
-      weight: weight,
+      weight: weight || 1,
       labelObject : labelObject,
       labelName : labelName,
       isDragged : isDragged
