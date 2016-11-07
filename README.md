@@ -1,5 +1,6 @@
 ![labelgun](logo.png)
 
+</br>
 Labelgun is a mapping library agnostic labelling engine. The library only makes two assumptions:
 
 * Each label has a bounding rectangle (Min X, Min Y, Max X, Max Y)
@@ -37,3 +38,4 @@ A nice way interactive way to play with the demos is to use the a hot reloading 
 Labelgun as an open source project made possible thanks to [Podaris](http://www.podaris.com).
 
 ## License
+MIT
