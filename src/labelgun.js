@@ -43,9 +43,9 @@ export default class labelgun {
    * @private
    */
   _labelHasChangedStates(forceUpdate, forceState) {
-    this.tree.all().forEach(function(label){
+    this.tree.all().forEach(label => {
       this._labelHasChangedState(label, forceUpdate, forceState);
-    }.bind(this));
+    });
   }
 
   /**
@@ -58,11 +58,9 @@ export default class labelgun {
    * @private
    */
   _labelHasChangedState(label, forceUpdate, forceState) {
-
     const state = forceState || label.state;
     if (state === "show") this.showLabel(label);
     if (state === "hide") this.hideLabel(label);
-
   }
 
   /**
@@ -71,24 +69,28 @@ export default class labelgun {
    * @returns {undefined}
    * @private
    */
-  _setupLabelStates() {
+  setupLabelStates() {
+
     if(this.hasZoomed) {
       this.hasZoomed = false;
       this.hasChanged.clear();
       this.resetTree();
 
       for (var id in this.allLabels) {
+
         const label = this.allLabels[id];
-        if (label.boundingBox) {
-          this._prioritiseLabel(
-            label.boundingBox,
-            label._id,
-            label.weight,
-            label.labelObject,
-            label.name,
-            label.isDragged
-          );
-        }
+        this._prioritiseLabel(
+          {
+            bottomLeft: [label.minX, label.minY],
+            topRight: [label.maxX, label.maxY]
+          },
+          label.id,
+          label.weight,
+          label.labelObject,
+          label.name,
+          label.isDragged
+        );
+
       }
 
 
@@ -96,24 +98,39 @@ export default class labelgun {
     else if(this.hasChanged.size) {
       const changed = [...this.hasChanged];
       this.hasChanged.clear();
-      changed.forEach(function(id) {
+      changed.forEach(id => {
 
         const label = this.allLabels[id];
 
-        if (label.boundingBox) {
-          this._prioritiseLabel(
-            label.boundingBox,
-            label._id,
-            label.weight,
-            label.labelObject,
-            label.name,
-            label.isDragged
-          );
-        }
-      }.bind(this));
+        this._prioritiseLabel(
+          {
+            bottomLeft: [label.minX, label.minY],
+            topRight: [label.maxX, label.maxY]
+          },
+          label._id,
+          label.weight,
+          label.labelObject,
+          label.name,
+          label.isDragged
+        );
+
+      });
 
     }
-    this._throttledHandleExCollisions(1000); // Only allow to execute once a second
+
+  }
+
+  update() {
+    this.hasZoomed = true;
+    this.handleExCollisions();
+    this.forceLabelStates(true);
+    this.resetTree();
+  }
+
+  handleExCollisions() {
+    this.tree.all().forEach(hidden => {
+      this._handleExCollisions(hidden);
+    });
   }
 
   /**
@@ -194,7 +211,7 @@ export default class labelgun {
     if (label.isDragged) label.weight = Infinity;
     let highest = label;
 
-    collisions.forEach(function(collision) {
+    collisions.forEach(collision => {
       const notItself = collision.id !== label.id;
 
       if (notItself) {
@@ -212,7 +229,7 @@ export default class labelgun {
           collision.state = "hide";
         }
       }
-    }, this);
+    });
 
     highest.state = "show";
 
@@ -257,6 +274,7 @@ export default class labelgun {
    * @private
    */
   _handleExCollisions(hidden) {
+
     if (hidden.state === "hide") {
       let stillCollides = false;
       const hiddenLabels = this.tree.search(hidden);
@@ -267,7 +285,6 @@ export default class labelgun {
         }
       }
       if (!stillCollides) {
-        //console.log(hidden.id, "SHOW");
         hidden.state = "show";
       }
     }
@@ -282,7 +299,10 @@ export default class labelgun {
    */
   _throttledHandleExCollisions(throttle) {
     return this._throttle(function() {
-      this.tree.all().forEach(this._handleExCollisions, this);
+      this.tree.all().forEach(hidden => {
+        this._handleExCollisions(hidden);
+      });
+
     }.bind(this), throttle)();
   }
 
@@ -298,7 +318,7 @@ export default class labelgun {
    * @returns {object}
    * @private
    */
-  _prioritiseLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
+  prioritiseLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
     const label = this._makeLabel(boundingBox, id, weight, labelObject, labelName, isDragged);
     const newLabel = !this.allLabels[id];
     if (!newLabel) this.removeFromTree(label);
