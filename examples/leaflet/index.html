@@ -67,41 +67,47 @@
         fetch("../geojson/cupcakes.geojson")
           .then(function(response){ return response.json()})
           .then(function(geojson){
-
+            var labels = [];
             var markers = L.geoJSON(geojson, {
               onEachFeature : function(feature, label) {
-
                 label.bindTooltip("Test ", {permanent: true});
-                label.added = true;
-                addLabel(label);
-
+                labels.push(label);
               }
-            }).addTo(map);
+            })
+            
+            markers.eachLayer(function(label){
+              label.added = true;
+              addLabel(label);
+            });
+      
+        
+            markers.addTo(map);
 
             map.fitBounds(markers.getBounds());
 
-            map.on("zoomend", function(){
+            map.on("moveend", function(){
+              console.log("resize end");
               markers.eachLayer(function(label){addLabel(label);});
               updateLabels();
             });
 
-            updateLabels();
+
             map.fitBounds(markers.getBounds());
             var cover = document.getElementById("cover");
             cover.parentNode.removeChild(cover);
+            updateLabels();
 
           });
 
         function updateLabels(wait) {
-          setTimeout(function(){
             labelEngine.update();
-          }, wait)
         }
 
         function addLabel(layer) {
-          setTimeout(function(){
-
-            var label = layer.getTooltip()._source._tooltip._container;
+            
+          var label = layer.getTooltip()._source._tooltip._container;
+          if (label) {
+          
             var rect = label.getBoundingClientRect();
 
             var bottomLeft = map.containerPointToLatLng([rect.left, rect.bottom]);
@@ -127,12 +133,11 @@
               layer.added = true;
             }
 
-          },0);
+          }
 
         }
+
       });
-
-
 
     </script>
   </body>

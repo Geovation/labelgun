@@ -121,10 +121,12 @@ export default class labelgun {
   }
 
   update() {
-    this.hasZoomed = true;
-    this.handleExCollisions();
-    this.forceLabelStates(true);
-    this.resetTree();
+
+      this.hasZoomed = true;
+      this.handleExCollisions();
+      this.forceLabelStates(true);
+      this.resetTree();
+
   }
 
   handleExCollisions() {
