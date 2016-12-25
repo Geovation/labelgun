@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "rbush": "^2.0.1",
-    "systemjs": "^0.19.39"
+    "systemjs": "^0.19.39",
+    "whatwg-fetch": "^2.0.1"
   }
 }
