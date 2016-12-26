@@ -8,7 +8,7 @@ export default class labelgun {
     this._point = undefined;
     this.hasChanged = new Set();
     this.loaded = false;
-    this.hasZoomed = false;
+    this.allChanged = false;
     this.hideLabel = hideLabel;
     this.showLabel = showLabel;
     const self = this;
@@ -31,19 +31,7 @@ export default class labelgun {
    * @returns {undefined}
    */
   forceLabelStates(forceUpdate, forceState) {
-    this._labelHasChangedStates(forceUpdate, forceState);
-  }
-
-  /**
-   * @name _labelHasChangedStates
-   * @summary Calls labelHasChangedState for all entities in the tree
-   * @param {boolean} forceUpdate if true, adds entities to lazy render queue
-   * @param {string} forceState the class of which to change the label to
-   * @returns {undefined}
-   * @private
-   */
-  _labelHasChangedStates(forceUpdate, forceState) {
-    this.tree.all().forEach(label => {
+     this.tree.all().forEach(label => {
       this._labelHasChangedState(label, forceUpdate, forceState);
     });
   }
@@ -71,15 +59,16 @@ export default class labelgun {
    */
   setupLabelStates() {
 
-    if(this.hasZoomed) {
-      this.hasZoomed = false;
+    if(this.allChanged) {
+      this.allChanged = false;
       this.hasChanged.clear();
       this.resetTree();
 
       for (var id in this.allLabels) {
-
+        
         const label = this.allLabels[id];
-        this._prioritiseLabel(
+
+        this.ingestLabel(
           {
             bottomLeft: [label.minX, label.minY],
             topRight: [label.maxX, label.maxY]
@@ -102,7 +91,7 @@ export default class labelgun {
 
         const label = this.allLabels[id];
 
-        this._prioritiseLabel(
+        this.ingestLabel(
           {
             bottomLeft: [label.minX, label.minY],
             topRight: [label.maxX, label.maxY]
@@ -121,11 +110,11 @@ export default class labelgun {
   }
 
   update() {
-
-      this.hasZoomed = true;
+    
+      this.allChanged = true;
+      this.setupLabelStates();
       this.handleExCollisions();
-      this.forceLabelStates(true);
-      this.resetTree();
+      this.forceLabelStates();
 
   }
 
@@ -184,7 +173,7 @@ export default class labelgun {
     const removelLabel = this.allLabels[id];
     this.tree.remove(removelLabel);
     delete this.allLabels[id];
-    if (forceUpdate) this._labelHasChangedStates(true);
+    if (forceUpdate) this.forceLabelStates(true);
   }
 
   /**
@@ -234,7 +223,6 @@ export default class labelgun {
     });
 
     highest.state = "show";
-
     if (originalWeight) highest.weight = originalWeight;
   }
 
@@ -309,7 +297,7 @@ export default class labelgun {
   }
 
   /**
-   * @name _prioritiseLabel
+   * @name _ingestLabel
    * @param {object} boundingBox
    * @param {string} id
    * @param {number} weight
@@ -320,7 +308,7 @@ export default class labelgun {
    * @returns {object}
    * @private
    */
-  prioritiseLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
+  ingestLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
     const label = this._makeLabel(boundingBox, id, weight, labelObject, labelName, isDragged);
     const newLabel = !this.allLabels[id];
     if (!newLabel) this.removeFromTree(label);
@@ -331,7 +319,7 @@ export default class labelgun {
       return;
     }
 
-    this._throttledHandleCollisions(collisions, label, isDragged, 1000);
+    this._handleCollisions(collisions, label, isDragged);
 
   }
 
