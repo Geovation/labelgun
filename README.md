@@ -14,13 +14,13 @@ You can install all the necessary dependencies with npm
 
 ### Develop
 
-You can build the source using
+Labelgun is transpiled from ES6 using babel presets for Webpack 2. You can build the source using
 
 `webpack`
 
 or
 
-`webpack --minified`
+`webpack --env.minified`
 
 For the minified version.
 
@@ -35,7 +35,7 @@ A nice way interactive way to play with the demos is to use the a hot reloading 
 
 
 ## Acknowledgements
-Labelgun as an open source project made possible thanks to [Podaris](http://www.podaris.com).
+Labelgun as an open source project was made possible thanks to [Podaris](http://www.podaris.com).
 
 ## License
 MIT
