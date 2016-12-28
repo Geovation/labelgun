@@ -1,10 +1,11 @@
 ![labelgun](logo.png)
 
 </br>
-Labelgun is a mapping library agnostic labelling engine. The library only makes two assumptions:
+Labelgun is a mapping library agnostic labelling engine. The library only makes three assumptions:
 
 * Each label has a bounding rectangle (Min X, Min Y, Max X, Max Y)
 * Each label has a weight
+* You can provide a function that will hide and show a label (i.e. through CSS class or JavaScript function for example)
 
 
 ### Install
