@@ -32,8 +32,6 @@ A nice way interactive way to play with the demos is to use the a hot reloading 
 
 `live-server`
 
-
-
 ## Acknowledgements
 Labelgun as an open source project was made possible thanks to [Podaris](http://www.podaris.com).
 
