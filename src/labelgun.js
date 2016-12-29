@@ -11,8 +11,42 @@ export default class labelgun {
     this.allChanged = false;
     this.hideLabel = hideLabel;
     this.showLabel = showLabel;
+
     const self = this;
 
+  }
+
+    /**
+   * @name _total
+   * @summary get the total hidden or shown labels in the tree
+   * @param {string} state whether to return 'hide' or 'show' state label totals
+   * @returns {number} total number of labels of taht state
+   */
+  _total(state) {
+    var total = 0;
+    for (var keys in this.allLabels) {
+      if (this.allLabels[keys].state == state) {
+        total += 1;
+      }
+    }
+    return total;
+  }
+
+  /**
+   * @name totalShown
+   * 
+   */
+  totalShown() {
+    return this._total("show")
+  }
+  
+
+  /**
+   * @name totalHidden
+   * 
+   */
+  totalHidden() {
+    return this._total("hide")
   }
 
   /**
@@ -26,13 +60,12 @@ export default class labelgun {
   /**
    * @name forceLabelStates
    * @summary Allows you to set a state for all current labels
-   * @param {boolean} forceUpdate if true, adds entities to lazy render queue
    * @param {string} forceState the class of which to change the label to
    * @returns {undefined}
    */
-  forceLabelStates(forceUpdate, forceState) {
+  forceLabelStates(forceState) {
      this.tree.all().forEach(label => {
-      this._labelHasChangedState(label, forceUpdate, forceState);
+      this._labelHasChangedState(label, forceState);
     });
   }
 
@@ -40,12 +73,11 @@ export default class labelgun {
    * @name _labelHasChangedState
    * @summary Sets the class for a particular label
    * @param {string} label the label to update
-   * @param {boolean} forceUpdate if true, adds the label to lazy render queue
    * @param {string} forceState the class of which to change the label to
    * @returns {undefined}
    * @private
    */
-  _labelHasChangedState(label, forceUpdate, forceState) {
+  _labelHasChangedState(label, forceState) {
     const state = forceState || label.state;
     if (state === "show") this.showLabel(label);
     if (state === "hide") this.hideLabel(label);
@@ -81,7 +113,6 @@ export default class labelgun {
         );
 
       }
-
 
     }
     else if(this.hasChanged.size) {
@@ -226,36 +257,6 @@ export default class labelgun {
     if (originalWeight) highest.weight = originalWeight;
   }
 
- _throttle (callback, limit) {
-    var wait = false;                 // Initially, we're not waiting
-    return function () {              // We return a throttled function
-        if (!wait) {                  // If we're not waiting
-            callback.call();          // Execute users function
-            wait = true;              // Prevent future invocations
-            setTimeout(function () {  // After a period of time
-                wait = false;         // And allow future invocations
-            }, limit);
-        }
-    };
-  }
-
-  /**
-   * @name _throttledHandleCollisions
-   * @param {array} collisions array of labels that have unresolved collisions
-   * @param {object} label label to handle collisions for
-   * @param {boolean} isDragged if label is currently being dragged
-   * @param {number} throttle interval to throttle calls by
-   * @summary Ensures handleCollisions cannot be called more than once per throttle time
-   * @returns {undefined}
-   * @private
-   */
-  _throttledHandleCollisions(collisions, label, isDragged, throttle) {
-    return this._throttle(function() {
-      this._handleCollisions(collisions, label, isDragged);
-    }.bind(this), throttle)();
-  }
-
-
   /**
    * @name _handleExCollisions
    * @param {object} hidden hidden label
@@ -278,22 +279,6 @@ export default class labelgun {
         hidden.state = "show";
       }
     }
-  }
-
-  /**
-   * @name _throttledHandleExCollisions
-   * @param {number} throttle interval to throttle calls by
-   * @summary Calls handleExCollisions on every tree label, no often than the throttle time
-   * @returns {undefined}
-   * @private
-   */
-  _throttledHandleExCollisions(throttle) {
-    return this._throttle(function() {
-      this.tree.all().forEach(hidden => {
-        this._handleExCollisions(hidden);
-      });
-
-    }.bind(this), throttle)();
   }
 
   /**
