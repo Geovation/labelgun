@@ -3,6 +3,7 @@
       var BENCHMARKING = true;
       var totalTime = 0;
       var totalMarkers;
+      var labelEngine;
 
       // Confiure location of necessary modules
       SystemJS.config({
@@ -25,25 +26,28 @@
         // Labelgun!
         var hideLabel = function(label){ label.labelObject.style.opacity = 0;};
         var showLabel = function(label){ label.labelObject.style.opacity = 1;};
-        var labelEngine = new labelgun.default(hideLabel, showLabel);
+        labelEngine = new labelgun.default(hideLabel, showLabel);
 
         var id = 0;
         fetch("../geojson/cupcakes.geojson")
           .then(function(response){ return response.json()})
           .then(function(geojson){
             var labels = [];
-            var markers = L.geoJSON(geojson, {
-              onEachFeature : function(feature, label) {
-                label.bindTooltip("Test ", {permanent: true});
-                labels.push(label);
-              }
-            })
             var totalMarkers = 0;
 
+            var markers = L.geoJSON(geojson, {
+              onEachFeature : function(feature, label) {
+                label.bindTooltip("Test " + totalMarkers, {permanent: true});
+                labels.push(label);
+                totalMarkers += 1;
+              }
+            });
+
+            var i = 0;
             markers.eachLayer(function(label){
               label.added = true;
-              addLabel(label);
-              totalMarkers += 1;
+              addLabel(label, i);
+              i++;
             });
 
             markers.addTo(map);
@@ -73,7 +77,7 @@
         }
 
 
-        function addLabel(layer) {
+        function addLabel(layer, id) {
             
           var label = layer.getTooltip()._source._tooltip._container;
           if (label) {
@@ -86,9 +90,7 @@
                 bottomLeft : [bottomLeft.lng, bottomLeft.lat],
                 topRight   : [topRight.lng, topRight.lat]
             };
-
-            id++;
-
+        
             labelEngine.ingestLabel(
               boundingBox,
               id,
@@ -114,8 +116,10 @@
           
           var start = performance.now(); 
           labelEngine.destroy();
+          var i = 0;
           markers.eachLayer(function(label){
-            addLabel(label)
+            addLabel(label, i);
+            i++;
           ;});
           labelEngine.update();
           var fin = performance.now();

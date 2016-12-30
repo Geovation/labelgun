@@ -32,21 +32,82 @@ export default class labelgun {
     return total;
   }
 
+
   /**
    * @name totalShown
-   * 
+   * @summary return the total number of shown labels
+   * @returns {number}
    */
   totalShown() {
-    return this._total("show")
+    return this._total("show");
   }
   
 
   /**
    * @name totalHidden
-   * 
+   * @summary return the total number of hidden labels
+   * @returns {number}
    */
   totalHidden() {
-    return this._total("hide")
+    return this._total("hide");
+  }
+
+    /**
+   * @name getLabelsByState
+   * @summary provided a state get all labels of that state
+   * @returns {array}
+   * @private
+   */
+  _getLabelsByState(state) {
+    var labels = [];
+    for (var keys in this.allLabels) {
+      if (this.allLabels[keys].state == state) {
+        labels.push(this.allLabels[keys]);;
+      }
+    }
+    return labels;
+  }
+
+   /**
+   * @name getHidden
+   * @summary Return 
+   * @returns {array}
+   */
+  getHidden() {
+    return this._getLabelsByState("hide");
+  }
+  
+  /**
+   * @name getShown
+   * @summary Return an array of all shown labels
+   * @returns {array}
+   */
+  getShown() {
+    return this._getLabelsByState("show");
+  }
+
+  /**
+   * @name getCollisions
+   * @summary Return a set of collisions (hidden and shown) for a given label
+   * @param {string} id the ID of the label to get
+   * @returns {array}
+   */
+  getCollisions(id) {
+     var label = this.allLabels[id];
+     var collisions =  this.tree.search(label);
+     var self = collisions.indexOf(label);
+     if (self !== undefined) collisions.splice(self, 1);
+     return collisions;
+  }
+
+  /**
+   * @name getLabel
+   * @summary Convience function to return a label by ID
+   * @param {string} id the ID of the label to get
+   * @returns {object}
+   */
+  getLabel(id) {
+    return this.allLabels[id];
   }
 
   /**
@@ -145,6 +206,7 @@ export default class labelgun {
       this.allChanged = true;
       this.setupLabelStates();
       this.handleExCollisions();
+      this._hideShownCollisions(); // HACK ALERT: why is this necessary ? :(
       this.forceLabelStates();
 
   }
@@ -219,6 +281,18 @@ export default class labelgun {
     this.tree.insert(label);
   }
 
+  _hideShownCollisions() {
+
+    // This method shouldn't have to exist...
+    this.getShown().forEach((label) => {
+     this.getCollisions(label.id).forEach((collision) => {
+      if (collision.state == "show") {
+        collision.state = "hide";
+      }
+    });
+   });
+  }
+
   /**
    * @name _handleCollisions
    * @param {array} collisions array of labels that have unresolved collisions
@@ -234,9 +308,6 @@ export default class labelgun {
     let highest = label;
 
     collisions.forEach(collision => {
-      const notItself = collision.id !== label.id;
-
-      if (notItself) {
 
         if (collision.isDragged) {
           originalWeight = collision.weight;
@@ -250,7 +321,7 @@ export default class labelgun {
         } else {
           collision.state = "hide";
         }
-      }
+      
     });
 
     highest.state = "show";
@@ -298,7 +369,7 @@ export default class labelgun {
     const newLabel = !this.allLabels[id];
     if (!newLabel) this.removeFromTree(label);
     this._addToTree(label);
-    var collisions = this.tree.search(label);
+    var collisions = this.getCollisions(id);
     if (!collisions.length || isDragged) {
       label.state = "show";
       return;
@@ -308,6 +379,11 @@ export default class labelgun {
 
   }
 
+  /**
+   * @name labelHasChanged
+   * @summary let labelgun know the label has changed 
+   * @returns {undefined}
+   */
   labelHasChanged(id) {
     this.hasChanged.add(id);
   }

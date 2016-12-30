@@ -139,7 +139,50 @@ describe('labelgun', function() {
     expect(hidden).toBe(1);
     expect(labelEngine.allLabels[0].state).toBe("hide");
     expect(labelEngine.allLabels[1].state).toBe("show");
+    expect(labelEngine.getCollisions(0).length).toBe(1);
 
+  
+  });
+
+  it('no shown labels should collide after their collisions have been dealt with', function(){
+   
+    var hideLabel = function(){ return false; }
+    var showLabel = function(){ return true; }
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+    var boundingBox; 
+    var n = 1000;
+
+    for (var i=0; i < n; i++) {
+      
+      boundingBox = {
+        bottomLeft : [i, i],
+        topRight   : [i + 1.0, i + 1.0]
+      };
+
+    
+      labelEngine.ingestLabel(
+        boundingBox,
+        i, //id
+        parseInt(Math.random() * (5 - 1) + 1), // Weight
+        {}, // label object
+        "Test",
+        false
+      )
+
+    }
+
+    labelEngine.update();
+
+    expect(labelEngine.tree.all().length).toBe(n);
+    expect(Object.keys(labelEngine.allLabels).length).toBe(n);
+    labelEngine.getShown().forEach(function(label){
+      expect(label).toBeDefined();
+      expect(label.id).toBeDefined();
+      expect(label.maxX).toBeDefined();
+      labelEngine.getCollisions(label.id).forEach(function(collision) {
+        expect(collision.state).toBe("hide");
+      });
+    })
   
   });
 
