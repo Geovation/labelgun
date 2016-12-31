@@ -114,7 +114,7 @@ export default class labelgun {
    * @name destroy
    */
   destroy() {
-    this.resetTree();
+    this._resetTree();
     this.allLabels = {};
   }
 
@@ -155,7 +155,7 @@ export default class labelgun {
     if(this.allChanged) {
       this.allChanged = false;
       this.hasChanged.clear();
-      this.resetTree();
+      this._resetTree();
 
       for (var id in this.allLabels) {
         
@@ -201,6 +201,12 @@ export default class labelgun {
 
   }
 
+  /**
+   * @name _resetTree
+   * @summary Clears current tree and redraws projection overlay
+   * @returns {undefined}
+   * @private
+   */
   update() {
     
       this.allChanged = true;
@@ -212,7 +218,7 @@ export default class labelgun {
   }
 
   handleExCollisions() {
-    this.tree.all().forEach(hidden => {
+    this.getHidden().forEach(hidden => {
       this._handleExCollisions(hidden);
     });
   }
@@ -223,7 +229,7 @@ export default class labelgun {
    * @returns {undefined}
    * @private
    */
-  resetTree() {
+  _resetTree() {
     this.tree.clear();
   }
 
