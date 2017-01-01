@@ -211,8 +211,8 @@ export default class labelgun {
     
       this.allChanged = true;
       this.setupLabelStates();
-      this.handleExCollisions();
       this._hideShownCollisions(); // HACK ALERT: why is this necessary ? :(
+      this.handleExCollisions();
       this.forceLabelStates();
 
   }
