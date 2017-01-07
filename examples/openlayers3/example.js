@@ -32,12 +32,12 @@ SystemJS.import('labelgun').then(function(labelgun) {
 
 
     var hideLabel = function(label) {
-         console.log("hide"); 
+        //  console.log("hide"); 
          label.labelObject.getImage().setOpacity(0);
     } 
 
     var showLabel = function(label){ 
-        console.log("show");  
+        // console.log("show");  
         label.labelObject.getImage().setOpacity(1);
     }
 
@@ -50,7 +50,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
         if (ghostZoom != map.getView().getZoom()) {
             ghostZoom = map.getView().getZoom();
 
-            labels.forEach(function(label, i){
+            labels.forEach(function(label, i) {
                 var boundingBox = getBoundingBox(label.center, label.width);
                 labelEngine.ingestLabel(
                     boundingBox,
@@ -91,13 +91,24 @@ SystemJS.import('labelgun').then(function(labelgun) {
     // to save cycles
     var labelCache = {};
 
+    var marker = new ol.style.Style({
+        image: new ol.style.Icon({
+            anchor: [0.5, 0.5],
+            // imgSize: [25, 25],
+            // anchorXUnits: 'fraction',
+            // anchorYUnits: 'pixels',
+            // opacity: 0.9,
+            src: 'marker.png'
+        })
+    });
+
     function createLabel(geojsonFeature){
 
         var text = geojsonFeature.get("name");
         var center = geojsonFeature.getGeometry().getCoordinates();
         var labelFontStyle = "Normal 12px Arial";
-        var labelWidth = getTextWidth(text, labelFontStyle);
-        labelWidth = labelWidth + 10;
+        var xPadding = 10;
+        var labelWidth = getTextWidth(text, labelFontStyle) + xPadding;
         var fillColor = "rgba(255, 255, 255, 0.75)";
 
         var iconSVG = '<svg ' +
@@ -113,39 +124,40 @@ SystemJS.import('labelgun').then(function(labelgun) {
         var src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent( iconSVG );
         var iconStyle;
 
+        // Use the label cache if we can
         if (labelCache[text]) {
             iconStyle = labelCache[text];
         } else {
             iconStyle = new ol.style.Style({
                 "image": new ol.style.Icon({
                     src : src,
-                    "imgSize":[labelWidth, 66],
+                    "imgSize":[labelWidth, 16],
                     "anchor": [0.5, 0.5],
-                    "offset": [0, -50]
-                })
+                    "offset": [0, 0],
+                    "zIndex": 1000
+                }),
+                "zIndex": 1000
             });
             labelCache[text] = iconStyle;
         }
 
         labels.push({center: center, width: labelWidth, iconStyle: iconStyle, text: text});
 
-        return iconStyle
+        return [marker, iconStyle]
 
     };
 
     function getBoundingBox(center, labelWidth) {
 
-        var halfLabelWidth = labelWidth / 2;
-        var halfLabelHeight = 16 / 2;
         var pixelCenter = map.getPixelFromCoordinate(center);
 
         // XY starts from the top right corner of the screen
-        var bl = [pixelCenter[0] - halfLabelWidth, pixelCenter[1] + halfLabelHeight];
-        var tr = [pixelCenter[0] + halfLabelWidth, pixelCenter[1] - halfLabelHeight];
+        var bl = [pixelCenter[0], pixelCenter[1] + 16];
+        var tr = [pixelCenter[0] + labelWidth, pixelCenter[1] - 16];
 
         var bottomLeft =  map.getCoordinateFromPixel(bl);
         var topRight =  map.getCoordinateFromPixel(tr);
-        
+
         return boundingBox =  {
             bottomLeft :  bottomLeft,
             topRight : topRight
