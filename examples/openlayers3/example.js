@@ -9,63 +9,82 @@ SystemJS.config({
 
 SystemJS.import('labelgun').then(function(labelgun) {
 
+    var labels = [];
+    var labelCache = {}; // We can save cycles by caching the labels!
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+
+    var geojson = new ol.source.Vector({
+        url: '/examples/geojson/cupcakes.geojson',
+        format: new ol.format.GeoJSON()
+    });
+
+    var cupcakesLayer = new ol.layer.Vector({
+        title: 'added Layer',
+        source: geojson,
+        style: createLabel
+    });
+
     var map = new ol.Map({
         layers: [
             new ol.layer.Tile({
                     source: new ol.source.OSM()
             }),
-            new ol.layer.Vector({
-                title: 'added Layer',
-                source: new ol.source.Vector({
-                    url: '/examples/geojson/cupcakes.geojson',
-                    format: new ol.format.GeoJSON()
-                }),
-                style: createLabel
-            })
+            cupcakesLayer
         ],
         target: 'map',
         view: new ol.View({
-            center: [0, 0],
+            center: ol.proj.transform([-122.676201, 45.523375], 'EPSG:4326', 'EPSG:3857'),
             zoom: 4
         })
     });
 
-
-    var hideLabel = function(label) {
-         label.labelObject.getImage().setOpacity(0);
-    } 
-
-    var showLabel = function(label) { 
-        label.labelObject.getImage().setOpacity(1);
-    }
-
-    labelEngine = new labelgun.default(hideLabel, showLabel);
+    var marker = new ol.style.Style({
+        image: new ol.style.Icon({
+            anchor: [0.5, 0.5],
+            opacity: 0.9,
+            src: 'marker.png'
+        })
+    });
 
     var ghostZoom = map.getView().getZoom();
-
     map.getView().on('change:resolution',function(){
-
         if (ghostZoom != map.getView().getZoom()) {
             ghostZoom = map.getView().getZoom();
-
-            labels.forEach(function(label, i) {
-                var boundingBox = getBoundingBox(label.center, label.width);
-                labelEngine.ingestLabel(
-                    boundingBox,
-                    i,
-                    1, // Weight
-                    label.iconStyle, // LabelObject
-                    label.text,
-                    false
-                );
-            });
-            labelEngine.update();
-            labelEngine.destroy();
-            labels = [];
+            updateLabels();
         }
     });
 
-    var labels = [];
+    cupcakesLayer.on('postcompose', function(){
+         if (cupcakesLayer.getVisible()) {
+            updateLabels();
+        }
+    });
+
+
+    function hideLabel(label) {
+         label.labelObject.getImage().setOpacity(0);
+    } 
+
+    function showLabel(label) { 
+        label.labelObject.getImage().setOpacity(1);
+    }
+
+    function updateLabels() {
+        labels.forEach(function(label, i) {
+            var boundingBox = getBoundingBox(label.center, label.width);
+            labelEngine.ingestLabel(
+                boundingBox,
+                i,
+                1, // Weight
+                label.iconStyle, // LabelObject
+                label.text,
+                false
+            );
+        });
+        labelEngine.update();
+        labelEngine.destroy();
+        labels = [];
+    }
 
     function getTextWidth (text, fontStyle) {
 
@@ -83,18 +102,6 @@ SystemJS.import('labelgun').then(function(labelgun) {
         return metrics.width;
 
     }
-
-    // Because we generate the labels with a functiom we can cache them
-    // to save cycles
-    var labelCache = {};
-
-    var marker = new ol.style.Style({
-        image: new ol.style.Icon({
-            anchor: [0.5, 0.5],
-            opacity: 0.9,
-            src: 'marker.png'
-        })
-    });
 
     function createLabel(geojsonFeature){
 
