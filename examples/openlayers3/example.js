@@ -32,12 +32,10 @@ SystemJS.import('labelgun').then(function(labelgun) {
 
 
     var hideLabel = function(label) {
-        //  console.log("hide"); 
          label.labelObject.getImage().setOpacity(0);
     } 
 
-    var showLabel = function(label){ 
-        // console.log("show");  
+    var showLabel = function(label) { 
         label.labelObject.getImage().setOpacity(1);
     }
 
@@ -55,12 +53,11 @@ SystemJS.import('labelgun').then(function(labelgun) {
                 labelEngine.ingestLabel(
                     boundingBox,
                     i,
-                    parseInt(Math.random() * (5 - 1) + 1), // Weight
-                    label.iconStyle,
+                    1, // Weight
+                    label.iconStyle, // LabelObject
                     label.text,
                     false
                 );
-
             });
             labelEngine.update();
             labelEngine.destroy();
@@ -76,7 +73,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
             context = undefined,
             metrics = undefined;
 
-        canvas = document.createElement( "canvas" )
+        canvas = document.createElement( "canvas" );
 
         context = canvas.getContext( "2d" );
 
@@ -94,10 +91,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
     var marker = new ol.style.Style({
         image: new ol.style.Icon({
             anchor: [0.5, 0.5],
-            // imgSize: [25, 25],
-            // anchorXUnits: 'fraction',
-            // anchorYUnits: 'pixels',
-            // opacity: 0.9,
+            opacity: 0.9,
             src: 'marker.png'
         })
     });
@@ -121,7 +115,8 @@ SystemJS.import('labelgun').then(function(labelgun) {
                         '</g>' +
                     '</svg>';
 
-        var src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent( iconSVG );
+        var svgURI = encodeURIComponent(iconSVG);
+        var src = 'data:image/svg+xml;charset=utf-8,' + svgURI;
         var iconStyle;
 
         // Use the label cache if we can
@@ -133,8 +128,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
                     src : src,
                     "imgSize":[labelWidth, 16],
                     "anchor": [0.5, 0.5],
-                    "offset": [0, 0],
-                    "zIndex": 1000
+                    "offset": [0, 0]
                 }),
                 "zIndex": 1000
             });
@@ -152,7 +146,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
         var pixelCenter = map.getPixelFromCoordinate(center);
 
         // XY starts from the top right corner of the screen
-        var bl = [pixelCenter[0], pixelCenter[1] + 16];
+        var bl = [pixelCenter[0] - labelWidth, pixelCenter[1] + 16] ;
         var tr = [pixelCenter[0] + labelWidth, pixelCenter[1] - 16];
 
         var bottomLeft =  map.getCoordinateFromPixel(bl);
