@@ -220,5 +220,48 @@ describe('labelgun', function() {
   
   });
 
+  it('overlapping labels should all be hidden except the one with the highest weight', function(){
+   
+    var hideLabel = function(){ return false; }
+    var showLabel = function(){ return true; }
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+    var boundingBox; 
+    var n = 1000;
+
+    for (var i=0; i < n; i++) {
+        
+      boundingBox = {
+        bottomLeft : [0, 0],
+        topRight   : [1.0, 1.0]
+      };
+
+      labelEngine.ingestLabel(
+        boundingBox,
+        i, //id
+        i, // Weight
+        {}, // label object
+        "Test",
+        false
+      )
+
+    }
+
+    labelEngine.update();
+
+    expect(labelEngine.tree.all().length).toBe(n);
+    expect(Object.keys(labelEngine.allLabels).length).toBe(n);
+    expect(labelEngine.getShown().length).toBe(1);
+  
+    for (key in labelEngine.allLabels) {
+      var label = labelEngine.allLabels[key];
+      if (label.id === i - 1) {
+        expect(label.state).toBe("show");
+      } else {
+        expect(label.state).toBe("hide");
+      }
+    }
+
+  });
+
 
 });
