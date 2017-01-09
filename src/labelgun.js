@@ -211,8 +211,8 @@ export default class labelgun {
     
       this.allChanged = true;
       this.setupLabelStates();
-      this._hideShownCollisions(); // HACK ALERT: why is this necessary ? :(
       this.handleExCollisions();
+      this._hideShownCollisions(); // HACK ALERT: why is this necessary ? :(
       this.forceLabelStates();
 
   }
@@ -372,8 +372,8 @@ export default class labelgun {
    */
   ingestLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
     const label = this._makeLabel(boundingBox, id, weight, labelObject, labelName, isDragged);
-    const newLabel = !this.allLabels[id];
-    if (!newLabel) this.removeFromTree(label);
+    const oldLabel = this.allLabels[id]
+    if (oldLabel) this.removeFromTree(oldLabel);
     this._addToTree(label);
     var collisions = this.getCollisions(id);
     if (!collisions.length || isDragged) {
