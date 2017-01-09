@@ -51,7 +51,6 @@ SystemJS.import('labelgun').then(function(labelgun) {
     // I wish there was a cleaner way to do this, and it still isn't perfect?
     var styleFunction = cupcakesLayer.getStyle();
     cupcakesLayer.on('postcompose', function() {
-  
         var labels = [];
         geojson.forEachFeature(function(feature){
             var label = getLabel(feature);
@@ -110,6 +109,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
     function createLabel(geojsonFeature){
 
         var text = geojsonFeature.get("name");
+        var id = geojsonFeature.get("name");
         var center = geojsonFeature.getGeometry().getCoordinates();
         var labelFontStyle = "Normal 12px Arial";
         var xPadding = 10;
@@ -131,8 +131,8 @@ SystemJS.import('labelgun').then(function(labelgun) {
         var iconStyle;
 
         // Use the label cache if we can
-        if (labelCache[text]) {
-            iconStyle = labelCache[text];
+        if (labelCache[id]) {
+            iconStyle = labelCache[id];
         } else {
             iconStyle = new ol.style.Style({
                 "image": new ol.style.Icon({
@@ -143,7 +143,8 @@ SystemJS.import('labelgun').then(function(labelgun) {
                 }),
                 "zIndex": 1000
             });
-            labelCache[text] = iconStyle;
+  
+            labelCache[id] = iconStyle;
         }
 
         return [marker, iconStyle]
