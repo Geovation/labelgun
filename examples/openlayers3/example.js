@@ -109,11 +109,10 @@ SystemJS.import('labelgun').then(function(labelgun) {
         return metrics.width;
 
     }
-    
+
     function createLabel(geojsonFeature){
 
         var text = geojsonFeature.get("name");
-        var fixedText = encodeText(text);
         var id = geojsonFeature.ol_uid; // Something unique!
 
         var center = geojsonFeature.getGeometry().getCoordinates();
@@ -128,7 +127,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
                         '<g>' +
                         '<rect x="0" y="0" width="' + labelWidth + '" height="'+labelHeight+'" stroke="#000000" fill="' + fillColor + '" stroke-width="2"></rect>' +
                         '<text x="5" y="14" fill="#000000" font-family="Arial" font-size="'+labelFontSize+'" font-weight="normal">' +
-                             _.escape(text) +              
+                             _.escape(text) +  // We need to escape all the special characters like & etc        
                         '</text>' +
                         '</g>' +
                     '</svg>';
