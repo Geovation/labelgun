@@ -1,5 +1,6 @@
 console.log("Openlayers3 Example");
 
+var labelEngine;
 SystemJS.config({
     map : {
         rbush : "/../../node_modules/rbush/rbush.js",
@@ -11,7 +12,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
 
     var labels = [];
     var labelCache = {}; // We can save cycles by caching the labels!
-    var labelEngine = new labelgun.default(hideLabel, showLabel);
+    labelEngine = new labelgun.default(hideLabel, showLabel);
 
     var geojson = new ol.source.Vector({
         url: '/examples/geojson/cupcakes.geojson',
@@ -34,7 +35,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
         target: 'map',
         view: new ol.View({
             center: ol.proj.transform([-122.676201, 45.523375], 'EPSG:4326', 'EPSG:3857'),
-            zoom: 4
+            zoom: 9
         })
     });
 
@@ -46,9 +47,9 @@ SystemJS.import('labelgun').then(function(labelgun) {
         })
     });
 
-    var ghostZoom = map.getView().getZoom();
-    map.getView().on('change:resolution',function(){
-        if (ghostZoom != map.getView().getZoom()) {
+    var ghostZoom = parseInt(map.getView().getZoom());
+    map.on('moveend', function() {
+        if (parseInt(ghostZoom) != parseInt(map.getView().getZoom())) {
             ghostZoom = map.getView().getZoom();
             updateLabels();
         }
@@ -70,6 +71,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
     }
 
     function updateLabels() {
+
         labels.forEach(function(label, i) {
             var boundingBox = getBoundingBox(label.center, label.width);
             labelEngine.ingestLabel(
