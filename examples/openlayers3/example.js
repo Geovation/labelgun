@@ -1,6 +1,8 @@
-console.log("Openlayers3 Example");
-
+// console.log("Openlayers3 Example");
+var geojson;
 var labelEngine;
+var map;
+
 SystemJS.config({
     map : {
         rbush : "/../../node_modules/rbush/rbush.js",
@@ -10,11 +12,10 @@ SystemJS.config({
 
 SystemJS.import('labelgun').then(function(labelgun) {
 
-    var labels = [];
     var labelCache = {}; // We can save cycles by caching the labels!
     labelEngine = new labelgun.default(hideLabel, showLabel);
 
-    var geojson = new ol.source.Vector({
+    geojson = new ol.source.Vector({
         url: '/examples/geojson/cupcakes.geojson',
         format: new ol.format.GeoJSON()
     });
@@ -25,7 +26,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
         style: createLabel
     });
 
-    var map = new ol.Map({
+     map = new ol.Map({
         layers: [
             new ol.layer.Tile({
                     source: new ol.source.OSM()
@@ -47,30 +48,32 @@ SystemJS.import('labelgun').then(function(labelgun) {
         })
     });
 
-    var ghostZoom = parseInt(map.getView().getZoom());
-    map.on('moveend', function() {
-        if (parseInt(ghostZoom) != parseInt(map.getView().getZoom())) {
-            ghostZoom = map.getView().getZoom();
-            updateLabels();
-        }
+    // I wish there was a cleaner way to do this, and it still isn't perfect?
+    var styleFunction = cupcakesLayer.getStyle();
+    cupcakesLayer.on('postcompose', function() {
+  
+        var labels = [];
+        geojson.forEachFeature(function(feature){
+            var label = getLabel(feature);
+            label.iconStyle = styleFunction(feature)[1]; // Not marker, the actual style!
+            labels.push(label);
+        });
+        updateLabels(labels);
     });
-
-    cupcakesLayer.on('postcompose', function(){
-         if (cupcakesLayer.getVisible()) {
-            updateLabels();
-        }
-    });
-
 
     function hideLabel(label) {
-         label.labelObject.getImage().setOpacity(0);
+         label.labelObject.getImage().setOpacity(0.0);
     } 
 
     function showLabel(label) { 
         label.labelObject.getImage().setOpacity(1);
     }
 
-    function updateLabels() {
+    function updateLabels(labels) {
+
+        if (Object.keys(labelEngine.allLabels).length > 0) {
+            labelEngine.destroy();
+        }
 
         labels.forEach(function(label, i) {
             var boundingBox = getBoundingBox(label.center, label.width);
@@ -84,8 +87,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
             );
         });
         labelEngine.update();
-        labelEngine.destroy();
-        labels = [];
+
     }
 
     function getTextWidth (text, fontStyle) {
@@ -144,19 +146,28 @@ SystemJS.import('labelgun').then(function(labelgun) {
             labelCache[text] = iconStyle;
         }
 
-        labels.push({center: center, width: labelWidth, iconStyle: iconStyle, text: text});
-
         return [marker, iconStyle]
 
     };
 
+    function getLabel(geojsonFeature) {
+        var text = geojsonFeature.get("name");
+        var center = geojsonFeature.getGeometry().getCoordinates();
+        var labelFontStyle = "Normal 12px Arial";
+        var xPadding = 10;
+        var labelWidth = getTextWidth(text, labelFontStyle) + xPadding;
+
+        var label = {center: center, width: labelWidth, iconStyle: null, text: text};
+        return label;
+    }
+
     function getBoundingBox(center, labelWidth) {
 
         var pixelCenter = map.getPixelFromCoordinate(center);
-
+        var buffer = 1;
         // XY starts from the top right corner of the screen
-        var bl = [pixelCenter[0] - labelWidth, pixelCenter[1] + 16] ;
-        var tr = [pixelCenter[0] + labelWidth, pixelCenter[1] - 16];
+        var bl = [pixelCenter[0] - labelWidth + buffer, pixelCenter[1] + 16 + buffer] ;
+        var tr = [pixelCenter[0] + labelWidth + buffer, pixelCenter[1] - 16 + buffer];
 
         var bottomLeft =  map.getCoordinateFromPixel(bl);
         var topRight =  map.getCoordinateFromPixel(tr);
