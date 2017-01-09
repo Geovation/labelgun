@@ -1,4 +1,4 @@
-// console.log("Openlayers3 Example");
+console.log("Openlayers3 Example");
 var geojson;
 var labelEngine;
 var map;
@@ -57,6 +57,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
             label.iconStyle = styleFunction(feature)[1]; // Not marker, the actual style!
             labels.push(label);
         });
+
         updateLabels(labels);
     });
 
@@ -73,7 +74,6 @@ SystemJS.import('labelgun').then(function(labelgun) {
         if (Object.keys(labelEngine.allLabels).length > 0) {
             labelEngine.destroy();
         }
-
         labels.forEach(function(label, i) {
             var boundingBox = getBoundingBox(label.center, label.width);
             labelEngine.ingestLabel(
@@ -85,6 +85,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
                 false
             );
         });
+
         labelEngine.update();
 
     }
@@ -109,7 +110,8 @@ SystemJS.import('labelgun').then(function(labelgun) {
     function createLabel(geojsonFeature){
 
         var text = geojsonFeature.get("name");
-        var id = geojsonFeature.get("name");
+        var id = geojsonFeature.ol_uid; // Something unique!
+
         var center = geojsonFeature.getGeometry().getCoordinates();
         var labelFontStyle = "Normal 12px Arial";
         var xPadding = 10;

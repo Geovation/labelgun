@@ -372,7 +372,7 @@ export default class labelgun {
    */
   ingestLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
     const label = this._makeLabel(boundingBox, id, weight, labelObject, labelName, isDragged);
-    const oldLabel = this.allLabels[id]
+    const oldLabel = this.allLabels[id];
     if (oldLabel) this.removeFromTree(oldLabel);
     this._addToTree(label);
     var collisions = this.getCollisions(id);
