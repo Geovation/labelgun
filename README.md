@@ -1,13 +1,13 @@
 ![labelgun](logo.png)
 
 </br>
-Labelgun is a mapping library agnostic labelling engine. It allows you to avoid cluttering in mapping popups and labels, providing prescedent to labels of your choice.
+Labelgun is a mapping library agnostic labelling engine. It allows you to avoid cluttering in mapping popups and labels, providing precedence to labels of your choice.
 
 The library makes three assumptions:
 
 * Each label has a bounding rectangle (Min X, Min Y, Max X, Max Y)
 * Each label has a weight
-* You can provide a function that will hide and show a label (i.e. through CSS class or JavaScript function for example)
+* You can provide a function that will hide and show a label (eg through CSS class or JavaScript function)
 
 
 ### Install
@@ -37,7 +37,7 @@ at the command line. Tests are found in the `spec` folder
 
 ### Demo
 
-A nice way interactive way to play with the demos is to use the a hot reloading web server such as live-server:
+A nice interactive way to play with the demos is to use a hot reloading web server such as live-server:
 
 `npm install -g live-server`
 
