@@ -3,10 +3,6 @@
   <head>
     <title>Simple Map</title>
     <link rel="stylesheet" href="https://openlayers.org/en/v3.20.1/css/ol.css" type="text/css">
-    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
-    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
-    <script src="https://openlayers.org/en/v3.20.1/build/ol-debug.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
      <style>
       html, body, #map {
         width: 100%;
@@ -18,7 +14,12 @@
   </head>
   <body>
     <div id="map" class="map"></div>
-    <script src="../../../node_modules/systemjs/dist/system.js"></script>
+    
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v3.20.1/build/ol-debug.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="https://unpkg.com/rbush@2.0.1/rbush.min.js"></script>
+    <script src="https://unpkg.com/labelgun@0.1.1/lib/labelgun.min.js"></script>
     <script src="example.js"></script>
   </body>
 </html>
