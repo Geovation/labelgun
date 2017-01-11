@@ -41,7 +41,7 @@ export default class labelgun {
   totalShown() {
     return this._total("show");
   }
-  
+
 
   /**
    * @name totalHidden
@@ -62,7 +62,7 @@ export default class labelgun {
     var labels = [];
     for (var keys in this.allLabels) {
       if (this.allLabels[keys].state == state) {
-        labels.push(this.allLabels[keys]);;
+        labels.push(this.allLabels[keys]);
       }
     }
     return labels;
@@ -70,13 +70,13 @@ export default class labelgun {
 
    /**
    * @name getHidden
-   * @summary Return 
+   * @summary Return
    * @returns {array}
    */
   getHidden() {
     return this._getLabelsByState("hide");
   }
-  
+
   /**
    * @name getShown
    * @summary Return an array of all shown labels
@@ -148,7 +148,6 @@ export default class labelgun {
    * @name _setupLabelStates
    * @summary Clears current tree and readds all stations
    * @returns {undefined}
-   * @private
    */
   setupLabelStates() {
 
@@ -158,7 +157,7 @@ export default class labelgun {
       this._resetTree();
 
       for (var id in this.allLabels) {
-        
+
         const label = this.allLabels[id];
 
         this.ingestLabel(
@@ -205,10 +204,9 @@ export default class labelgun {
    * @name _resetTree
    * @summary Clears current tree and redraws projection overlay
    * @returns {undefined}
-   * @private
    */
   update() {
-    
+
       this.allChanged = true;
       this.setupLabelStates();
       this.handleExCollisions();
@@ -327,7 +325,7 @@ export default class labelgun {
         } else {
           collision.state = "hide";
         }
-      
+
     });
 
     highest.state = "show";
@@ -368,7 +366,6 @@ export default class labelgun {
    * @param {boolean} isDragged
    * @summary Creates a label if it does not already exsist, then adds it to the tree, and renders it based on whether it can be shown
    * @returns {object}
-   * @private
    */
   ingestLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
     const label = this._makeLabel(boundingBox, id, weight, labelObject, labelName, isDragged);
@@ -387,7 +384,7 @@ export default class labelgun {
 
   /**
    * @name labelHasChanged
-   * @summary let labelgun know the label has changed 
+   * @summary let labelgun know the label has changed
    * @returns {undefined}
    */
   labelHasChanged(id) {
