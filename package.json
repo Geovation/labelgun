@@ -1,23 +1,27 @@
 {
   "name": "labelgun",
-  "version": "1.0.0",
-  "description": "A labelling engine for maps",
-  "main": "labelgun.js",
+  "version": "0.1.1",
+  "description": "A mapping library agnostic labelling engine",
+  "main": "lib/labelgun.js",
   "scripts": {
-    "test": "test"
+    "test": "jasmine"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "James Milner <james.milner@geovation.uk> (http://geovation.uk/)",
+  "license": "MIT",
+  "repository": {
+       "type": "git",
+       "url": "git@github.com:Geovation/labelgun.git"
+  },
   "devDependencies": {
     "babel-core": "^6.17.0",
     "babel-loader": "^6.2.5",
     "babel-preset-es2015": "^6.16.0",
     "jasmine": "^2.5.2",
-    "webpack": "^2.1.0-beta.28"
-  },
-  "dependencies": {
-    "rbush": "^2.0.1",
+    "webpack": "^2.1.0-beta.28",
     "systemjs": "^0.19.39",
     "whatwg-fetch": "^2.0.1"
+  },
+  "dependencies": {
+    "rbush": "^2.0.1"
   }
 }
