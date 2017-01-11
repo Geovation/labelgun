@@ -8,7 +8,7 @@
   var labelEngine = new labelgun.default(hideLabel, showLabel);
 
   var geojson = new ol.source.Vector({
-      url: '/examples/geojson/cupcakes.geojson',
+      url: '../geojson/cupcakes.geojson',
       format: new ol.format.GeoJSON()
   });
 
