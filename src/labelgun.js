@@ -20,7 +20,7 @@ export default class labelgun {
    * @name _total
    * @summary get the total hidden or shown labels in the tree
    * @param {string} state whether to return 'hide' or 'show' state label totals
-   * @returns {number} total number of labels of taht state
+   * @returns {number} total number of labels of that state
    */
   _total(state) {
     var total = 0;
@@ -102,7 +102,7 @@ export default class labelgun {
 
   /**
    * @name getLabel
-   * @summary Convience function to return a label by ID
+   * @summary Convenience function to return a label by ID
    * @param {string} id the ID of the label to get
    * @returns {object}
    */
@@ -364,7 +364,7 @@ export default class labelgun {
    * @param {object} gmLabel
    * @param {string} labelName
    * @param {boolean} isDragged
-   * @summary Creates a label if it does not already exsist, then adds it to the tree, and renders it based on whether it can be shown
+   * @summary Creates a label if it does not already exist, then adds it to the tree, and renders it based on whether it can be shown
    * @returns {object}
    */
   ingestLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
