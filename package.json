@@ -2,7 +2,7 @@
   "name": "labelgun",
   "version": "0.1.0",
   "description": "A mapping library agnostic labelling engine",
-  "main": "labelgun.js",
+  "main": "lib/labelgun.js",
   "scripts": {
     "test": "jasmine"
   },

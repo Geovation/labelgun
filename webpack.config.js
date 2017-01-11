@@ -7,7 +7,7 @@ module.exports = function(env) {
   var plugins = [];
   var outputFile = "./lib/labelgun.js";
 
-  if (env && env.minimize) {
+  if (env && env.minified) {
     outputFile = "./lib/labelgun.min.js";
     plugins.push(new webpack.optimize.UglifyJsPlugin({
       sourceMap: true

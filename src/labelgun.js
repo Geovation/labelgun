@@ -62,7 +62,7 @@ export default class labelgun {
     var labels = [];
     for (var keys in this.allLabels) {
       if (this.allLabels[keys].state == state) {
-        labels.push(this.allLabels[keys]);;
+        labels.push(this.allLabels[keys]);
       }
     }
     return labels;
