@@ -35,6 +35,14 @@ or:
 
 For the minified version.
 
+GitHub pages deployment:
+
+`git subtree push --prefix examples origin gh-pages`
+
+NPM updating:
+
+`npm publish`
+
 ### Test
 
 Labelgun uses Jasmine for testing. You can do an npm install and then use:
