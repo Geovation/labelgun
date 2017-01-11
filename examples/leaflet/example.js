@@ -17,42 +17,37 @@
       labelEngine = new labelgun.default(hideLabel, showLabel);
 
       var id = 0;
-      fetch("../geojson/cupcakes.geojson")
-        .then(function(response){ return response.json()})
-        .then(function(geojson){
-          var labels = [];
-          var totalMarkers = 0;
+      var labels = [];
+      var totalMarkers = 0;
 
-          var markers = L.geoJSON(geojson, {
-            onEachFeature : function(feature, label) {
-              label.bindTooltip("Test " + totalMarkers, {permanent: true});
-              labels.push(label);
-              totalMarkers += 1;
-            }
-          });
-
-          var i = 0;
-          markers.eachLayer(function(label){
-            label.added = true;
-            addLabel(label, i);
-            i++;
-          });
-
-          markers.addTo(map);
-
-          map.on("zoomend", function(){
-            if (BENCHMARKING) benchmarkResetLabels(markers);
-            else resetLabels(markers);
-          });
-          map.fitBounds(markers.getBounds());
-
-          if(BENCHMARKING) benchmark();
-
-          var cover = document.getElementById("cover");
-          cover.parentNode.removeChild(cover);
-          resetLabels(markers);
-
+      var markers = L.geoJSON(geojson, {
+        onEachFeature : function(feature, label) {
+          label.bindTooltip("Test " + totalMarkers, {permanent: true});
+          labels.push(label);
+          totalMarkers += 1;
+        }
       });
+
+      var i = 0;
+      markers.eachLayer(function(label){
+        label.added = true;
+        addLabel(label, i);
+        i++;
+      });
+
+      markers.addTo(map);
+
+      map.on("zoomend", function(){
+        if (BENCHMARKING) benchmarkResetLabels(markers);
+        else resetLabels(markers);
+      });
+      map.fitBounds(markers.getBounds());
+
+      if(BENCHMARKING) benchmark();
+
+      var cover = document.getElementById("cover");
+      cover.parentNode.removeChild(cover);
+      resetLabels(markers);
 
       function resetLabels(markers) {
 
