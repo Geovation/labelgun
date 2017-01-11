@@ -13,7 +13,7 @@ SystemJS.config({
 SystemJS.import('labelgun').then(function(labelgun) {
 
     var labelCache = {}; // We can save cycles by caching the labels!
-    var labelHeight = 22;
+    var labelHeight = 18;
     var labelFontSize = 14;
     var labelFontStyle = "Normal "+labelFontSize+"px Arial";
     labelEngine = new labelgun.default(hideLabel, showLabel);
@@ -170,7 +170,7 @@ SystemJS.import('labelgun').then(function(labelgun) {
     function getBoundingBox(center, labelWidth) {
 
         var pixelCenter = map.getPixelFromCoordinate(center);
-        var buffer = 1;
+        var buffer = 0;
         // XY starts from the top right corner of the screen
         var bl = [pixelCenter[0] - labelWidth + buffer, pixelCenter[1] + labelHeight + buffer] ;
         var tr = [pixelCenter[0] + labelWidth + buffer, pixelCenter[1] - labelHeight + buffer];
