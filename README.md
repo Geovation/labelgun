@@ -7,7 +7,7 @@ The library makes three assumptions:
 
 * Each label has a bounding rectangle (Min X, Min Y, Max X, Max Y)
 * Each label has a weight
-* You can provide a function that will hide and show a label (eg through CSS class or JavaScript function)
+* You can provide a function that will hide and show a label (e.g. through CSS class or JavaScript function)
 
 
 ### Install
@@ -42,6 +42,12 @@ A nice interactive way to play with the demos is to use a hot reloading web serv
 `npm install -g live-server`
 
 `live-server`
+
+### npm
+
+Labelgun is hosted on npm. You can install via:
+
+`npm install labelgun --save`
 
 ## Acknowledgements
 Labelgun as an open source project was made possible thanks to [Podaris](http://www.podaris.com).
