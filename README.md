@@ -9,19 +9,27 @@ The library makes three assumptions:
 * Each label has a weight
 * You can provide a function that will hide and show a label (e.g. through CSS class or JavaScript function)
 
+### Use
 
-### Install
-You can install all the necessary dependencies with npm
+You can use labelgun in your project via npm such as:
 
-`npm install`
+`npm install labelgun --save`
+
+You can also use a auto-generated CDN thanks to unpkg :
+
+`https://unpkg.com/labelgun@0.1.1/lib/labelgun.js`
 
 ### Develop
 
-Labelgun is transpiled from ES6 using babel presets for Webpack 2. You can build the source using
+We can install all the required dependencies using node+npm:
+
+`npm install`
+
+Labelgun is transpiled from ES6 using babel presets for Webpack 2. You can build the source using:
 
 `webpack`
 
-or
+or:
 
 `webpack --env.minified`
 
@@ -42,12 +50,6 @@ A nice interactive way to play with the demos is to use a hot reloading web serv
 `npm install -g live-server`
 
 `live-server`
-
-### npm
-
-Labelgun is hosted on npm. You can install via:
-
-`npm install labelgun --save`
 
 ## Acknowledgements
 Labelgun as an open source project was made possible thanks to [Podaris](http://www.podaris.com).
