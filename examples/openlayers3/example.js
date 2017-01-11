@@ -6,14 +6,16 @@
   var labelFontStyle = "Normal "+labelFontSize+"px Arial";
   var labelEngine = new labelgun.default(hideLabel, showLabel);
 
-  var geojson = new ol.source.Vector({
-      url: '/examples/geojson/cupcakes.geojson',
-      format: new ol.format.GeoJSON()
-  });
+  var format_geojson = new ol.format.GeoJSON();
+  var features_geojson = format_geojson.readFeatures(geojson, {
+    dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'
+  }); 
+  var source_geojson = new ol.source.Vector();
+  source_geojson.addFeatures(features_geojson);
 
   var cupcakesLayer = new ol.layer.Vector({
       title: 'added Layer',
-      source: geojson,
+      source: source_geojson,
       style: createLabel
   });
 
@@ -43,7 +45,7 @@
   var styleFunction = cupcakesLayer.getStyle();
   cupcakesLayer.on('postcompose', function() {
       var labels = [];
-      geojson.forEachFeature(function(feature){
+      source_geojson.forEachFeature(function(feature){
           var label = getLabel(feature);
           label.iconStyle = styleFunction(feature)[1]; // Not marker, the actual style!
           labels.push(label);
