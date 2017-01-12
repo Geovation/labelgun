@@ -15,7 +15,7 @@
 
   var cupcakesLayer = new ol.layer.Vector({
       title: 'added Layer',
-      source: source_geojson,
+      source: sourceGeojson,
       style: createLabel
   });
 
