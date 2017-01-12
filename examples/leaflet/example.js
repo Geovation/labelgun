@@ -1,4 +1,4 @@
-      console.log("Leaflet Exampe");
+      console.log("Leaflet Example");
 
       var BENCHMARKING = true;
       var totalTime = 0;
