@@ -1,3 +1,4 @@
+
   console.log("Openlayers3 Example");
 
   var labelCache = {}; // We can save cycles by caching the labels!

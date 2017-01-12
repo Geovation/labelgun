@@ -9,6 +9,8 @@ The library makes three assumptions:
 * Each label has a weight
 * You can provide a function that will hide and show a label (e.g. through CSS class or JavaScript function)
 
+## Using Labelgun
+
 ### Use
 
 You can use labelgun in your project via npm such as:
@@ -19,7 +21,17 @@ You can also use a auto-generated CDN thanks to unpkg :
 
 `https://unpkg.com/labelgun@0.1.1/lib/labelgun.js`
 
-### Develop
+### Demo
+
+A nice interactive way to play with the demos is to use a hot reloading web server such as live-server:
+
+`npm install -g live-server`
+
+`live-server`
+
+## Develop
+
+### Building
 
 We can install all the required dependencies using node+npm:
 
@@ -43,13 +55,15 @@ Labelgun uses Jasmine for testing. You can do an npm install and then use:
 
 at the command line. Tests are found in the `spec` folder  
 
-### Demo
+### GitHub Pages & NPM
 
-A nice interactive way to play with the demos is to use a hot reloading web server such as live-server:
+GitHub pages deployment:
 
-`npm install -g live-server`
+`git subtree push --prefix examples origin gh-pages`
 
-`live-server`
+NPM updating:
+
+`npm publish`
 
 ## Acknowledgements
 Labelgun as an open source project was made possible thanks to [Podaris](http://www.podaris.com).
