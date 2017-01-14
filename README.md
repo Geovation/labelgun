@@ -9,6 +9,9 @@ The library makes three assumptions:
 * Each label has a weight
 * You can provide a function that will hide and show a label (e.g. through CSS class or JavaScript function)
 
+<br><br>
+![Labelgun example in leaflet](labelgun.gif)
+
 ## Using Labelgun
 
 ### Use
