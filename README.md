@@ -54,9 +54,11 @@ For the minified version.
 
 Labelgun uses Jasmine for testing. You can do an npm install and then use:
 
-`jasmine`
+`npm run test`
 
-at the command line. Tests are found in the `spec` folder  
+at the command line. Tests are found in the `spec` folder. We can also run test coverage as so:
+
+`npm run coverage`
 
 ### GitHub Pages & NPM
 
