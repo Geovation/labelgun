@@ -1,4 +1,3 @@
-
 var labelgun = require("../lib/labelgun");
 
 describe('labelgun', function() {
@@ -76,7 +75,7 @@ describe('labelgun', function() {
   
   });
 
-  it('should ingest many labels (10)', function(){
+  it('should destroy labelgun data', function(){
    
     var hideLabel = function(){ return false; }
     var showLabel = function(){ return true; }
@@ -103,6 +102,9 @@ describe('labelgun', function() {
 
     expect(labelEngine.tree.all().length).toBe(10);
     expect(Object.keys(labelEngine.allLabels).length).toBe(10);
+    labelEngine.destroy();
+    expect(Object.keys(labelEngine.allLabels).length).toBe(0);
+    expect(labelEngine.tree.all().length).toBe(0);
   
   });
 
