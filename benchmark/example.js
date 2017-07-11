@@ -1,5 +1,6 @@
       console.log("Leaflet Example");
 
+      var BENCHMARKING = true;
       var totalTime = 0;
       var totalMarkers;
       var labelEngine;
@@ -11,11 +12,6 @@
       }).addTo(map);
 
       // Labelgun!
-
-      // This is core of how Labelgun works. We must provide two functions, one
-      // that hides our labels, another that shows the labels. These are essentially
-      // callbacks that labelgun uses to actually show and hide our labels
-      // In this instance we set the labels opacity to 0 and 1 respectively. 
       var hideLabel = function(label){ label.labelObject.style.opacity = 0;};
       var showLabel = function(label){ label.labelObject.style.opacity = 1;};
       labelEngine = new labelgun.default(hideLabel, showLabel);
@@ -24,7 +20,6 @@
       var labels = [];
       var totalMarkers = 0;
 
-      // Add the markers to the map
       var markers = L.geoJSON(geojson, {
         onEachFeature : function(feature, label) {
           label.bindTooltip("Test " + totalMarkers, {permanent: true});
@@ -33,7 +28,6 @@
         }
       });
 
-      // For each marker lets add a label
       var i = 0;
       markers.eachLayer(function(label){
         label.added = true;
@@ -44,9 +38,12 @@
       markers.addTo(map);
 
       map.on("zoomend", function(){
-         resetLabels(markers);
+        if (BENCHMARKING) benchmarkResetLabels(markers);
+        else resetLabels(markers);
       });
       map.fitBounds(markers.getBounds());
+
+      if(BENCHMARKING) benchmark();
 
       var cover = document.getElementById("cover");
       cover.parentNode.removeChild(cover);
@@ -62,16 +59,14 @@
 
       }
 
+
       function addLabel(layer, id) {
 
-        // This is ugly but there is no getContainer method on the tooltip :(
         var label = layer.getTooltip()._source._tooltip._container;
         if (label) {
 
-          // We need the bounding rectangle of the label itself
           var rect = label.getBoundingClientRect();
 
-          // We convert teh container coordinates (screen space) to Lat/lng
           var bottomLeft = map.containerPointToLatLng([rect.left, rect.bottom]);
           var topRight = map.containerPointToLatLng([rect.right, rect.top]);
           var boundingBox = {
@@ -79,7 +74,6 @@
               topRight   : [topRight.lng, topRight.lat]
           };
 
-          // Ingest the label into labelgun itself
           labelEngine.ingestLabel(
             boundingBox,
             id,
@@ -89,8 +83,6 @@
             false
           )
 
-          // If the label hasn't been added to the map already
-          // add it and set the added flag to true
           if (!layer.added) {
             layer.addTo(map);
             layer.added = true;
@@ -98,4 +90,31 @@
 
         }
 
+      }
+
+
+      // BENCHMARK FUNCTIONS:
+
+      function benchmarkResetLabels(markers) {
+
+        var start = performance.now();
+        labelEngine.destroy();
+        var i = 0;
+        markers.eachLayer(function(label){
+          addLabel(label, i);
+          i++;
+        ;});
+        labelEngine.update();
+        var fin = performance.now();
+        totalTime += fin - start;
+
+      }
+
+      function benchmark() {
+        var n = 100;
+        for (var i=0; i <= n; i++) {
+          if (i % 2 === 0) map.zoomIn()
+          else map.zoomOut();
+        }
+        console.log("Average time to hide/show " + totalMarkers + " labels : ", (100 * totalTime/n).toFixed(2) + "ms");
       }
