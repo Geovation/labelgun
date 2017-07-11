@@ -38,18 +38,18 @@ module.exports = function(env) {
       }
     ],
     module: {
-      rules: [{
-          use : [
-            {
-              loader: "babel-loader",
-              options: {
-                compact: false, // because I want readable output,
-                presets: ['es2015']
-              }
+      rules: [
+        {
+          test: /\.js$/,
+          exclude: /(node_modules|bower_components)/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['env']
             }
-          ]
-
-      }]
+          }
+        }
+      ]
     }
   } // End of config
 
