@@ -55,8 +55,9 @@
       function resetLabels(markers) {
 
         labelEngine.destroy();
+        var i = 0;
         markers.eachLayer(function(label){
-          addLabel(label)
+          addLabel(label, ++i);
         ;});
         labelEngine.update();
 

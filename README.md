@@ -48,7 +48,11 @@ or:
 
 `webpack --env.minified`
 
-For the minified version.
+For the minified version. You can also watch teh file with :
+
+`webpack --watch`
+
+To watch the file.
 
 ### Test
 
