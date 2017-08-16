@@ -76,8 +76,10 @@ NPM updating:
 
 ## Users
 
-[Vroom](http://vroom-project.org/) - Vehicle routing optimisation software
-[OL Mapbox Style](https://github.com/boundlessgeo/ol-mapbox-style) - Use Mapbox Style objects with OpenLayers
+- [Vroom](http://vroom-project.org/) - Vehicle routing optimisation software
+- [OL Mapbox Style](https://github.com/boundlessgeo/ol-mapbox-style) - Use Mapbox Style objects with OpenLayers
+
+Using Labelgun? Open a pull request and let us know!
 
 ## Acknowledgements
 Labelgun as an open source project was made possible thanks to [Podaris](http://www.podaris.com).
