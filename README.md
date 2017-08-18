@@ -36,25 +36,24 @@ A nice interactive way to play with the demos is to use a hot reloading web serv
 
 ### Building
 
-We can install all the required dependencies using node+npm:
+We can install all the required dependencies using node and npm:
 
 `npm install`
 
 Labelgun is transpiled from ES6 using babel presets for Webpack 2. You can build the source using:
 
-`webpack`
+`npm build`
 
 or:
 
-`webpack --env.minified`
+`npm build-prod`
 
-For the minified version. You can also watch teh file with :
+For the minified version. You can also watch the file with:
 
-`webpack --watch`
+`npm watch`
 
-To watch the file.
 
-### Test
+### Tests
 
 Labelgun uses Jasmine for testing. You can do an npm install and then use:
 

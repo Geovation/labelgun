@@ -75,6 +75,96 @@ describe('labelgun', function() {
   
   });
 
+  it('should return the total shown and hidden correctly', function(){
+   
+    var hideLabel = function(){ return false; }
+    var showLabel = function(){ return true; }
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+    var boundingBox; 
+
+    for (var i=0; i < 10; i++) {
+      
+      boundingBox = {
+        bottomLeft : [i, i],
+        topRight   : [i + 1.0, i + 1.0]
+      };
+
+      labelEngine.ingestLabel(
+        boundingBox,
+        i, //id
+        1, // Weight
+        {}, // label object
+        "Test",
+        false
+      )
+
+    }
+
+    expect(labelEngine.totalShown()).toBe(1);
+    expect(labelEngine.totalHidden()).toBe(9);
+
+  });
+
+
+  it('should return the total shown and hidden correctly', function(){
+   
+    var hideLabel = function(){ return false; }
+    var showLabel = function(){ return true; }
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+    var boundingBox; 
+
+    for (var i=0; i < 10; i++) {
+      
+      boundingBox = {
+        bottomLeft : [i, i],
+        topRight   : [i + 1.0, i + 1.0]
+      };
+
+      labelEngine.ingestLabel(
+        boundingBox,
+        i, //id
+        1, // Weight
+        {}, // label object
+        "Test",
+        false
+      )
+
+    }
+
+    expect(labelEngine.getShown().length).toBe(1);
+    expect(labelEngine.getHidden().length).toBe(9);
+
+  });
+
+  it('should return the correct number of collisions', function(){
+   
+    var hideLabel = function(){ return false; }
+    var showLabel = function(){ return true; }
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+    var boundingBox; 
+
+    for (var i=0; i < 10; i++) {
+
+      boundingBox = {
+        bottomLeft : [i + 1.0, i + 1.0 ],
+        topRight   : [i + 2.0, i + 2.0]
+      };
+
+      labelEngine.ingestLabel(
+        boundingBox,
+        i, //id
+        1, // Weight
+        {}, // label object
+        "Test",
+        false
+      )
+
+    }
+    
+    expect(labelEngine.getCollisions(0).length).toBe(1);
+
+  });
+
   it('should destroy labelgun data', function(){
    
     var hideLabel = function(){ return false; }
@@ -257,6 +347,67 @@ describe('labelgun', function() {
     for (key in labelEngine.allLabels) {
       var label = labelEngine.allLabels[key];
       if (label.id === i - 1) {
+        expect(label.state).toBe("show");
+      } else {
+        expect(label.state).toBe("hide");
+      }
+    }
+
+  });
+
+  it('dragged labels should always be shown over none dragged', function(){
+   
+    var hideLabel = function(){ return false; }
+    var showLabel = function(){ return true; }
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+    var boundingBox; 
+    var n = 1000;
+
+      
+    boundingBox = {
+        bottomLeft : [0, 0],
+        topRight   : [1.0, 1.0]
+    };
+
+    labelEngine.ingestLabel(
+      boundingBox,
+      500, //id
+      0, // Weight
+      {}, // label object
+      "Test",
+      true
+    )
+
+    for (var i = 0; i < n; i++) {
+
+      if (i !== 500) {
+
+        boundingBox = {
+          bottomLeft : [0, 0],
+          topRight   : [1.0, 1.0]
+        };
+
+        labelEngine.ingestLabel(
+          boundingBox,
+          i, //id
+          i, // Weight
+          {}, // label object
+          "Test",
+          false
+        )
+      }
+    
+    }
+
+    labelEngine.update();
+
+    expect(labelEngine.tree.all().length).toBe(n);
+    expect(Object.keys(labelEngine.allLabels).length).toBe(n);
+    expect(labelEngine.getShown().length).toBe(1);
+  
+    for (key in labelEngine.allLabels) {
+      var label = labelEngine.allLabels[key];
+      if (label.id === 500) {
         expect(label.state).toBe("show");
       } else {
         expect(label.state).toBe("hide");
