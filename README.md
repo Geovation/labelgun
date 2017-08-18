@@ -42,15 +42,15 @@ We can install all the required dependencies using node and npm:
 
 Labelgun is transpiled from ES6 using babel presets for Webpack 2. You can build the source using:
 
-`npm build`
+`npm run build`
 
 or:
 
-`npm build-prod`
+`npm run build-prod`
 
 For the minified version. You can also watch the file with:
 
-`npm watch`
+`npm run watch`
 
 
 ### Tests
