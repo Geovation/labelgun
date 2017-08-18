@@ -1,3 +1,4 @@
+/* eslint-disable */
 var geojson={
   "type": "FeatureCollection",
   "features": [

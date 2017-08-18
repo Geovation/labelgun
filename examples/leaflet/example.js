@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 console.log("Leaflet Example");
 
 var totalTime = 0;

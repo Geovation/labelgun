@@ -1,4 +1,6 @@
 
+/* eslint-disable */
+
 console.log("Openlayers4 Example");
 
 var labelCache = {}; // We can save cycles by caching the labels!
