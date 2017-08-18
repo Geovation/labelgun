@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-var webpack = require('webpack');
+var webpack = require("webpack");
 
 module.exports = function(env) {
 
@@ -34,7 +34,7 @@ module.exports = function(env) {
     // that shouldn't be resolved by webpack.
     externals: [
       {
-          rbush: "rbush"
+        rbush: "rbush"
       }
     ],
     module: {
@@ -43,16 +43,16 @@ module.exports = function(env) {
           test: /\.js$/,
           exclude: /(node_modules|bower_components)/,
           use: {
-            loader: 'babel-loader',
+            loader: "babel-loader",
             options: {
-              presets: ['env']
+              presets: ["env"]
             }
           }
         }
       ]
     }
-  } // End of config
+  }; // End of config
 
   return config;
 
-}
+};

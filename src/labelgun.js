@@ -1,4 +1,4 @@
-import rbush from 'rbush';
+import rbush from "rbush";
 
 export default class labelgun {
   constructor(hideLabel, showLabel) {
@@ -12,11 +12,9 @@ export default class labelgun {
     this.hideLabel = hideLabel;
     this.showLabel = showLabel;
 
-    const self = this;
-
   }
 
-    /**
+  /**
    * @name _total
    * @summary get the total hidden or shown labels in the tree
    * @param {string} state whether to return 'hide' or 'show' state label totals
@@ -52,7 +50,7 @@ export default class labelgun {
     return this._total("hide");
   }
 
-    /**
+  /**
    * @name getLabelsByState
    * @summary provided a state get all labels of that state
    * @returns {array}
@@ -68,7 +66,7 @@ export default class labelgun {
     return labels;
   }
 
-   /**
+  /**
    * @name getHidden
    * @summary Return
    * @returns {array}
@@ -93,11 +91,11 @@ export default class labelgun {
    * @returns {array}
    */
   getCollisions(id) {
-     var label = this.allLabels[id];
-     var collisions =  this.tree.search(label);
-     var self = collisions.indexOf(label);
-     if (self !== undefined) collisions.splice(self, 1);
-     return collisions;
+    var label = this.allLabels[id];
+    var collisions =  this.tree.search(label);
+    var self = collisions.indexOf(label);
+    if (self !== undefined) collisions.splice(self, 1);
+    return collisions;
   }
 
   /**
@@ -125,7 +123,7 @@ export default class labelgun {
    * @returns {undefined}
    */
   forceLabelStates(forceState) {
-     this.tree.all().forEach(label => {
+    this.tree.all().forEach(label => {
       this._labelHasChangedState(label, forceState);
     });
   }
@@ -207,11 +205,11 @@ export default class labelgun {
    */
   update() {
 
-      this.allChanged = true;
-      this.setupLabelStates();
-      this.handleExCollisions();
-      this._hideShownCollisions(); // HACK ALERT: why is this necessary ? :(
-      this.forceLabelStates();
+    this.allChanged = true;
+    this.setupLabelStates();
+    this.handleExCollisions();
+    this._hideShownCollisions(); // HACK ALERT: why is this necessary ? :(
+    this.forceLabelStates();
 
   }
 
@@ -289,12 +287,12 @@ export default class labelgun {
 
     // This method shouldn't have to exist...
     this.getShown().forEach((label) => {
-     this.getCollisions(label.id).forEach((collision) => {
-      if (collision.state == "show") {
-        collision.state = "hide";
-      }
+      this.getCollisions(label.id).forEach((collision) => {
+        if (collision.state == "show") {
+          collision.state = "hide";
+        }
+      });
     });
-   });
   }
 
   /**
@@ -306,25 +304,25 @@ export default class labelgun {
    * @returns {undefined}
    * @private
    */
-  _handleCollisions(collisions, label, isDragged) {
+  _handleCollisions(collisions, label) {
     let originalWeight;
     if (label.isDragged) label.weight = Infinity;
     let highest = label;
 
     collisions.forEach(collision => {
 
-        if (collision.isDragged) {
-          originalWeight = collision.weight;
-          highest = collision;
-          highest.weight = Infinity;
-        }
+      if (collision.isDragged) {
+        originalWeight = collision.weight;
+        highest = collision;
+        highest.weight = Infinity;
+      }
 
-        if (collision.weight > highest.weight) {
-          highest.state = "hide";
-          highest = collision;
-        } else {
-          collision.state = "hide";
-        }
+      if (collision.weight > highest.weight) {
+        highest.state = "hide";
+        highest = collision;
+      } else {
+        collision.state = "hide";
+      }
 
     });
 

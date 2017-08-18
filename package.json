@@ -7,10 +7,10 @@
     "test": "jasmine",
     "coverage": "istanbul cover jasmine -x 'spec/**/*.js'",
     "coverage-verbose": "istanbul cover jasmine -v -x 'spec/**/*.js'",
-    "watch" : "webpack --watch",
-    "build" : "webpack",
-    "build-prod" : "webpack --env.minified",
-    "build-both" : "webpack && webpack --env.minified"
+    "watch": "webpack --watch",
+    "build": "webpack",
+    "build-prod": "webpack --env.minified",
+    "build-both": "webpack && webpack --env.minified"
   },
   "author": "James Milner <james.milner@geovation.uk> (http://geovation.uk/)",
   "license": "MIT",
@@ -23,6 +23,7 @@
     "babel-loader": "^7.1.1",
     "babel-preset-env": "^1.6.0",
     "babel-preset-es2015": "^6.24.1",
+    "eslint": "^4.4.1",
     "istanbul": "^0.4.5",
     "jasmine": "^2.7.0",
     "systemjs": "^0.20.17",
