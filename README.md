@@ -20,14 +20,19 @@ You can use labelgun in your project via npm such as:
 
 `npm install labelgun --save`
 
+Or if you're using `yarn`:
+
+`yarn add labelgun`
+
 You can also use a auto-generated CDN thanks to unpkg :
 
-`https://unpkg.com/labelgun@2.0.0/lib/labelgun.js`
+`https://unpkg.com/labelgun@3.0.0/lib/labelgun.js`
 
+### Docs and Demos
 
-### Demo
+Check out the [docs and demos live here](http://tech.geovation.uk/labelgun/)
 
-A nice interactive way to play with the demos is to use a hot reloading web server such as live-server:
+A nice interactive way to play with the demos locally is to use a hot reloading web server such as live-server:
 
 `npm install -g live-server`
 
