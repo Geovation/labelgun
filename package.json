@@ -6,12 +6,12 @@
   "scripts": {
     "test": "jasmine",
     "coverage": "istanbul cover jasmine -x 'spec/**/*.js'",
-    "coverage-verbose": "istanbul cover jasmine -v -x 'spec/**/*.js'",
+    "coverage-verbose": "istanbul cover jasmine -v -i 'src/labelgun.js'",
     "watch": "webpack --watch",
     "build": "webpack",
     "build-prod": "webpack --env.minified",
     "build-both": "webpack && webpack --env.minified",
-    "doc": "jsdoc src/labelgun.js --destination examples/doc"
+    "doc": "jsdoc src/labelgun.js --destination doc/documentation"
   },
   "author": "James Milner <james.milner@geovation.uk> (http://geovation.uk/)",
   "license": "MIT",

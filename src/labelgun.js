@@ -1,6 +1,13 @@
 import rbush from "rbush";
 
-export default class labelgun {
+/** Class representing a labelgun instance */
+class labelgun {
+
+  /**
+   * @summary create a label gun instance with a hide and show label callback
+   * @param {function} hideLabel the function responsible for hiding the label on hide event
+   * @param {function} showLabel the function responsible for showing the label on show event
+   */
   constructor(hideLabel, showLabel) {
 
     this.tree = rbush(6);
@@ -95,6 +102,8 @@ export default class labelgun {
     var label = this.allLabels[id];
     var collisions =  this.tree.search(label);
     var self = collisions.indexOf(label);
+
+    // Remove the label if it's colliding with itself
     if (self !== undefined) collisions.splice(self, 1);
     return collisions;
   }
@@ -118,12 +127,12 @@ export default class labelgun {
   }
 
   /**
-   * @name forceLabelStates
+   * @name updateLabelStates
    * @summary Allows you to set a state for all current labels
-   * @param {string} forceState the class of which to change the label to
+   * @param {string} [forceState] the class of which to change the label to
    * @returns {undefined}
    */
-  forceLabelStates(forceState) {
+  updateLabelStates(forceState) {
     this.tree.all().forEach(label => {
       this._labelHasChangedState(label, forceState);
     });
@@ -209,25 +218,41 @@ export default class labelgun {
     this.allChanged = true;
     this.setupLabelStates();
     this.handleExCollisions();
-    this._hideShownCollisions(); // HACK ALERT: why is this necessary ? :(
-    this.forceLabelStates();
+    this._hideShownCollisions(); // TODO: why is this necessary ? :(
+    this.updateLabelStates();
 
   }
 
   /**
    * @name handleExCollisions
-   * @summary Checks to see if a previously hidden/collided label is now able to be shown and then shows
+   * @summary Checks to see if a previously hidden/collided label is now able to be shown and then changes there state
    * @returns {undefined}
    */
   handleExCollisions() {
     this.getHidden().forEach(hidden => {
-      this._handleExCollisions(hidden);
+      if (hidden.state === "hide") {
+
+        let stillCollides = false;
+        const hiddenLabels = this.tree.search(hidden);
+
+        for (var i=0; i < hiddenLabels.length; i++){
+          if (hiddenLabels[i].state !== "hide") {
+            stillCollides = true;
+            break;
+          }
+        }
+
+        if (!stillCollides) {
+          hidden.state = "show";
+        }
+
+      }
     });
   }
 
   /**
    * @name _resetTree
-   * @summary Clears current tree and redraws projection overlay
+   * @summary Clears current tree containing all inputted labels
    * @returns {undefined}
    * @private
    */
@@ -274,7 +299,7 @@ export default class labelgun {
     const removelLabel = this.allLabels[id];
     this.tree.remove(removelLabel);
     delete this.allLabels[id];
-    if (forceUpdate) this.forceLabelStates(true);
+    if (forceUpdate) this.updateLabelStates(true);
   }
 
   /**
@@ -290,7 +315,6 @@ export default class labelgun {
   }
 
   _hideShownCollisions() {
-
     // This method shouldn't have to exist...
     this.getShown().forEach((label) => {
       this.getCollisions(label.id).forEach((collision) => {
@@ -319,6 +343,9 @@ export default class labelgun {
 
       if (collision.isDragged) {
         originalWeight = collision.weight;
+
+        // We set the dragged marker to the highest weight
+        // and make its weight unbeatable (infinity)
         highest = collision;
         highest.weight = Infinity;
       }
@@ -337,30 +364,6 @@ export default class labelgun {
   }
 
   /**
-   * @name _handleExCollisions
-   * @param {object} hidden hidden label
-   * @summary Checks to see if a previously hidden/collided label is now able to be shown and then shows
-   * @returns {undefined}
-   * @private
-   */
-  _handleExCollisions(hidden) {
-
-    if (hidden.state === "hide") {
-      let stillCollides = false;
-      const hiddenLabels = this.tree.search(hidden);
-      for (var i=0; i < hiddenLabels.length; i++){
-        if (hiddenLabels[i].state !== "hide") {
-          stillCollides = true;
-          break;
-        }
-      }
-      if (!stillCollides) {
-        hidden.state = "show";
-      }
-    }
-  }
-
-  /**
    * @name ingestLabel
    * @param {object} boundingBox
    * @param {string} id
@@ -372,16 +375,25 @@ export default class labelgun {
    * @returns {object}
    */
   ingestLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
-    const label = this._makeLabel(boundingBox, id, weight, labelObject, labelName, isDragged);
+
+    // If there is already a label in the tree, remove it
     const oldLabel = this.allLabels[id];
     if (oldLabel) this.removeFromTree(oldLabel);
+
+    // Add the new label to the tree
+    const label = this._makeLabel(boundingBox, id, weight, labelObject, labelName, isDragged);
     this._addToTree(label);
+
+    // Get all of its collisions
     var collisions = this.getCollisions(id);
-    if (!collisions.length || isDragged) {
+
+    // If the collisions are non existance we can show it
+    if (!collisions.length) {
       label.state = "show";
       return;
     }
 
+    // Else we need to handle the collisions and decide which one to show
     this._handleCollisions(collisions, label, isDragged);
 
   }
@@ -396,3 +408,5 @@ export default class labelgun {
   }
 
 }
+
+export default labelgun;
