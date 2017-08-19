@@ -68,7 +68,7 @@ at the command line. Tests are found in the `spec` folder. We can also run test 
 
 GitHub pages deployment:
 
-`git subtree push --prefix examples origin gh-pages`
+`git subtree push --prefix doc/documentation origin gh-pages`
 
 NPM updating:
 
