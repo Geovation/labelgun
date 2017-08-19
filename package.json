@@ -10,7 +10,8 @@
     "watch": "webpack --watch",
     "build": "webpack",
     "build-prod": "webpack --env.minified",
-    "build-both": "webpack && webpack --env.minified"
+    "build-both": "webpack && webpack --env.minified",
+    "doc": "jsdoc src/labelgun.js --destination examples/doc"
   },
   "author": "James Milner <james.milner@geovation.uk> (http://geovation.uk/)",
   "license": "MIT",
@@ -26,6 +27,7 @@
     "eslint": "^4.4.1",
     "istanbul": "^0.4.5",
     "jasmine": "^2.7.0",
+    "jsdoc": "^3.5.4",
     "systemjs": "^0.20.17",
     "webpack": "^3.5.5",
     "whatwg-fetch": "^2.0.3"

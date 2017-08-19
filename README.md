@@ -24,6 +24,7 @@ You can also use a auto-generated CDN thanks to unpkg :
 
 `https://unpkg.com/labelgun@0.1.1/lib/labelgun.js`
 
+
 ### Demo
 
 A nice interactive way to play with the demos is to use a hot reloading web server such as live-server:

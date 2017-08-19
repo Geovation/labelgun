@@ -74,7 +74,7 @@ function addLabel(layer, id) {
     // We need the bounding rectangle of the label itself
     var rect = label.getBoundingClientRect();
 
-    // We convert teh container coordinates (screen space) to Lat/lng
+    // We convert the container coordinates (screen space) to Lat/lng
     var bottomLeft = map.containerPointToLatLng([rect.left, rect.bottom]);
     var topRight = map.containerPointToLatLng([rect.right, rect.top]);
     var boundingBox = {

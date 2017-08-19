@@ -417,4 +417,43 @@ describe("labelgun", function() {
   });
 
 
+  it("should allow for setting one label as changed", function(){
+   
+    var hideLabel = function(){ return false; };
+    var showLabel = function(){ return true; };
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+    var boundingBox; 
+    var n = 10;
+
+    for (var i = 0; i < n; i++) {
+
+      boundingBox = {
+        bottomLeft : [0, 0],
+        topRight   : [1, 1]
+      };
+
+      labelEngine.ingestLabel(
+        boundingBox,
+        i, //id
+        1, // Weight
+        {}, // label object
+        "Test",
+        false
+      );
+      
+    }
+
+    labelEngine.allLabels[5].weight = 1000;
+    labelEngine.labelHasChanged(5);
+    expect(labelEngine.hasChanged.size).toBe(1);
+
+    labelEngine.setupLabelStates();
+
+    expect(labelEngine.getShown().length).toBe(1);
+    expect(typeof(labelEngine.getShown()[0])).toBe("object");
+    expect(labelEngine.getShown()[0].id).toBe(5);
+
+  });
+
+
 });

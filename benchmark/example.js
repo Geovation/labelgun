@@ -53,8 +53,8 @@ function resetLabels(markers) {
 
   labelEngine.destroy();
   markers.eachLayer(function(label){
-    addLabel(label)
-    ;});
+    addLabel(label);
+  });
   labelEngine.update();
 
 }
