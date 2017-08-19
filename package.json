@@ -11,7 +11,7 @@
     "build": "webpack",
     "build-prod": "webpack --env.minified",
     "build-both": "webpack && webpack --env.minified",
-    "doc": "jsdoc src/labelgun.js --destination doc/documentation",
+    "doc": "jsdoc src/labelgun.js --destination docs/documentation",
     "doc-deploy": "npm run doc && git push origin --delete gh-pages && git subtree push --prefix docs/ origin gh-pages"
   },
   "author": "James Milner <james.milner@geovation.uk> (http://geovation.uk/)",
