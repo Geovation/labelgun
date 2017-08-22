@@ -1,18 +1,17 @@
-/**
- * @module labelgun
- */
 
 import rbush from "rbush";
 
-export default class labelgun {
+export default labelgun;
 
-  /**
-   * @constructor
-   * @summary create a label gun instance with a hide and show label callback
-   * @param {function} hideLabel the function responsible for hiding the label on hide event
-   * @param {function} showLabel the function responsible for showing the label on show event
-   * @param {number} entries Higher value relates to faster insertion and slower search, and vice versa
-   */
+/**
+* @summary create a label gun instance with a hide and show label callback
+* @param {function} hideLabel the function responsible for hiding the label on hide event
+* @param {function} showLabel the function responsible for showing the label on show event
+* @param {number} entries Higher value relates to faster insertion and slower search, and vice versa
+*/
+const labelgun = class labelgun {
+
+ 
   constructor(hideLabel, showLabel, entries) {
 
     const usedEntries = entries || 6;
@@ -47,8 +46,11 @@ export default class labelgun {
 
   /**
    * @name totalShown
+   * @memberof labelgun
+   * @method
    * @summary Return the total number of shown labels
-   * @returns {number}
+   * @returns {number} Return total number of labels shown
+   * @public
    */
   totalShown() {
     return this._total("show");
@@ -57,8 +59,11 @@ export default class labelgun {
 
   /**
    * @name totalHidden
+   * @memberof labelgun
+   * @method
    * @summary Return the total number of hidden labels
-   * @returns {number}
+   * @returns {number} Return total number of labels hidden
+   * @public
    */
   totalHidden() {
     return this._total("hide");
@@ -67,7 +72,8 @@ export default class labelgun {
   /**
    * @name getLabelsByState
    * @summary Provided a state get all labels of that state
-   * @returns {array}
+   * @param {string} state - the state of the labels to get (show or hide)
+   * @returns {array} Labels that match the given state (show or hide)
    * @private
    */
   _getLabelsByState(state) {
@@ -82,8 +88,10 @@ export default class labelgun {
 
   /**
    * @name getHidden
+   * @memberof labelgun
+   * @method
    * @summary Return an array of all the hidden labels
-   * @returns {array}
+   * @returns {array} An array of hidden labels
    */
   getHidden() {
     return this._getLabelsByState("hide");
@@ -91,8 +99,10 @@ export default class labelgun {
 
   /**
    * @name getShown
+   * @memberof labelgun
+   * @method
    * @summary Return an array of all shown labels
-   * @returns {array}
+   * @returns {array} An array of shown label
    */
   getShown() {
     return this._getLabelsByState("show");
@@ -100,9 +110,11 @@ export default class labelgun {
 
   /**
    * @name getCollisions
+   * @memberof labelgun
+   * @method
    * @summary Return a set of collisions (hidden and shown) for a given label
-   * @param {string} id the ID of the label to get
-   * @returns {array}
+   * @param {string} id - the ID of the label to get
+   * @returns {array} The list of collisions
    */
   getCollisions(id) {
     var label = this.allLabels[id];
@@ -116,9 +128,11 @@ export default class labelgun {
 
   /**
    * @name getLabel
+   * @memberof labelgun
+   * @method
    * @summary Convenience function to return a label by ID
    * @param {string} id the ID of the label to get
-   * @returns {object}
+   * @returns {object} The label object for the id
    */
   getLabel(id) {
     return this.allLabels[id];
@@ -126,7 +140,10 @@ export default class labelgun {
 
   /**
    * @name destroy
+   * @memberof labelgun
+   * @method
    * @summary Destroy the collision tree and labels
+   * @returns {undefined}
    */
   destroy() {
     this._resetTree();
@@ -135,8 +152,10 @@ export default class labelgun {
 
   /**
    * @name callLabelCallbacks
+   * @memberof labelgun
+   * @method
    * @summary Perform the related callback for a label depending on where its state is 'show' or 'hide'
-   * @param {string} [forceState] the class of which to change the label to
+   * @param {string} [forceState] - the class of which to change the label to
    * @returns {undefined}
    */
   callLabelCallbacks(forceState) {
@@ -161,6 +180,8 @@ export default class labelgun {
 
   /**
    * @name setupLabelStates
+   * @memberof labelgun
+   * @method
    * @summary Sets up the labels depending on whether all have changed or some have changed
    * @returns {undefined}
    */
@@ -217,6 +238,8 @@ export default class labelgun {
 
   /**
    * @name update
+   * @memberof labelgun
+   * @method
    * @summary Sets all labels to change and reruns the whole show/hide procedure
    * @returns {undefined}
    */
@@ -232,6 +255,8 @@ export default class labelgun {
 
   /**
    * @name _handlePreviousCollisions
+   * @memberof labelgun
+   * @method
    * @summary Checks to see if a previously hidden/collided label is now able to be shown and then changes there state
    * @returns {undefined}
    * @private
@@ -260,6 +285,8 @@ export default class labelgun {
 
   /**
    * @name _resetTree
+   * @memberof labelgun
+   * @method
    * @summary Clears current tree containing all inputted labels
    * @returns {undefined}
    * @private
@@ -270,13 +297,16 @@ export default class labelgun {
 
   /**
    * @name _makeLabel
-   * @param {object} boundingBox
-   * @param {string} id
-   * @param {number} weight
-   * @param {string} labelName
-   * @param {boolean} isDragged
+   * @memberof labelgun
+   * @method
+   * @param {object} boundingBox - The bounding box object with bottomLeft and topRight properties
+   * @param {string} id - The idea of the label
+   * @param {number} weight - The weight to calculate in the collision resolution
+   * @param {object} labelObject - The object representing the actual label object from your mapping library
+   * @param {string} labelName - A string depicting the name of the label
+   * @param {boolean} isDragged - A flag to say whether the lable is being dragged
    * @summary Creates a standard label object with a default state
-   * @returns {object}
+   * @returns {object} The label object 
    * @private
    */
   _makeLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
@@ -296,7 +326,9 @@ export default class labelgun {
 
   /**
    * @name _removeFromTree
-   * @param {object} label
+   * @memberof labelgun
+   * @method
+   * @param {object} label - The label to remove from the tree
    * @param {boolean} forceUpdate if true, triggers all labels to be updated
    * @summary Removes label from tree
    * @returns {undefined}
@@ -312,7 +344,9 @@ export default class labelgun {
 
   /**
    * @name _addToTree
-   * @param {object} label
+   * @memberof labelgun
+   * @method
+   * @param {object} label - The label to add to the tree
    * @summary inserts label into tree
    * @returns {undefined}
    * @private
@@ -335,9 +369,11 @@ export default class labelgun {
 
   /**
    * @name _handleCollisions
-   * @param {array} collisions array of labels that have unresolved collisions
-   * @param {object} label label to handle collisions for
-   * @param {boolean} isDragged if label is currently being dragged
+   * @memberof labelgun
+   * @method
+   * @param {array} collisions - array of labels that have unresolved collisions
+   * @param {object} label - label to handle collisions for
+   * @param {boolean} isDragged - if label is currently being dragged
    * @summary Weighted collisions resolution for labels in the tree
    * @returns {undefined}
    * @private
@@ -373,14 +409,16 @@ export default class labelgun {
 
   /**
    * @name ingestLabel
-   * @param {object} boundingBox
-   * @param {string} id
-   * @param {number} weight
-   * @param {object} gmLabel
-   * @param {string} labelName
-   * @param {boolean} isDragged
+   * @memberof labelgun
+   * @method
+   * @param {object} boundingBox - The bounding box object with bottomLeft and topRight properties
+   * @param {string} id - The idea of the label
+   * @param {number} weight - The weight to calculate in the collision resolution
+   * @param {object} labelObject - The object representing the actual label object from your mapping library
+   * @param {string} labelName - A string depicting the name of the label
+   * @param {boolean} isDragged - A flag to say whether the lable is being dragged
    * @summary Creates a label if it does not already exist, then adds it to the tree, and renders it based on whether it can be shown
-   * @returns {object}
+   * @returns {undefined} 
    */
   ingestLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
 
@@ -408,7 +446,10 @@ export default class labelgun {
 
   /**
    * @name labelHasChanged
-   * @summary let labelgun know the label has changed
+   * @memberof labelgun
+   * @param id - The id of the label that has changed in some way
+   * @method
+   * @summary Let labelgun know the label has changed in some way (i.e. it's state for example, or that it is dragged)
    * @returns {undefined}
    */
   labelHasChanged(id) {

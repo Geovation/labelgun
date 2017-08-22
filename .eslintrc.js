@@ -14,6 +14,9 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
+        "valid-jsdoc": [
+            "error"
+        ],
         "indent": [
             "error",
             2
