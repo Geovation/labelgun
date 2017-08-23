@@ -1,7 +1,7 @@
 
 import rbush from "rbush";
 
-export default labelgun;
+export default 
 
 /**
 * @summary create a label gun instance with a hide and show label callback
@@ -9,7 +9,7 @@ export default labelgun;
 * @param {function} showLabel the function responsible for showing the label on show event
 * @param {number} entries Higher value relates to faster insertion and slower search, and vice versa
 */
-const labelgun = class labelgun {
+class labelgun {
 
  
   constructor(hideLabel, showLabel, entries) {
