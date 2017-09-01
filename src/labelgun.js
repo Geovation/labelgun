@@ -192,10 +192,10 @@ class labelgun {
       this.hasChanged.clear();
       this._resetTree();
 
-      for (var id in this.allLabels) {
-
+      Object.keys(this.allLabels).forEach((id) => {
+        
         const label = this.allLabels[id];
-
+ 
         this.ingestLabel(
           {
             bottomLeft: [label.minX, label.minY],
@@ -208,7 +208,7 @@ class labelgun {
           label.isDragged
         );
 
-      }
+      });
 
     }
     else if(this.hasChanged.size) {
@@ -248,7 +248,6 @@ class labelgun {
     this.allChanged = true;
     this.setupLabelStates();
     this._handlePreviousCollisions();
-    this._hideShownCollisions(); // TODO: why is this necessary ? :(
     this.callLabelCallbacks();
 
   }
@@ -310,6 +309,11 @@ class labelgun {
    * @private
    */
   _makeLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
+    
+    if (weight === undefined || weight === null) {
+      weight = 0;
+    }
+
     return {
       minX: boundingBox.bottomLeft[0],
       minY: boundingBox.bottomLeft[1],
@@ -317,11 +321,12 @@ class labelgun {
       maxY: boundingBox.topRight[1],
       state: "hide",
       id : id,
-      weight: weight || 1,
+      weight: weight,
       labelObject : labelObject,
       name : labelName,
       isDragged : isDragged
     };
+
   }
 
   /**
@@ -393,7 +398,7 @@ class labelgun {
         highest = collision;
         highest.weight = Infinity;
       }
-
+ 
       if (collision.weight > highest.weight) {
         highest.state = "hide";
         highest = collision;
@@ -404,6 +409,7 @@ class labelgun {
     });
 
     highest.state = "show";
+
     if (originalWeight) highest.weight = originalWeight;
   }
 

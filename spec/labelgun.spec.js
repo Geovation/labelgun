@@ -270,7 +270,7 @@ describe("labelgun", function() {
   
   });
 
-  it("no shown labels should collide after their collisions have been dealt with", function(){
+  it("none overlapping labels should all be shown (1000 labels)", function(){
    
     var hideLabel = function(){ return false; };
     var showLabel = function(){ return true; };
@@ -279,17 +279,16 @@ describe("labelgun", function() {
     var n = 1000;
 
     for (var i=0; i < n; i++) {
-      
+        
       boundingBox = {
-        bottomLeft : [i, i],
-        topRight   : [i + 1.0, i + 1.0]
+        bottomLeft : [i, 1 + i],
+        topRight   : [0.5 + i, 0.5 + i]
       };
 
-    
       labelEngine.ingestLabel(
         boundingBox,
         i, //id
-        parseInt(Math.random() * (5 - 1) + 1), // Weight
+        1, // Weight
         {}, // label object
         "Test",
         false
@@ -301,18 +300,11 @@ describe("labelgun", function() {
 
     expect(labelEngine.tree.all().length).toBe(n);
     expect(Object.keys(labelEngine.allLabels).length).toBe(n);
-    labelEngine.getShown().forEach(function(label){
-      expect(label).toBeDefined();
-      expect(label.id).toBeDefined();
-      expect(label.maxX).toBeDefined();
-      labelEngine.getCollisions(label.id).forEach(function(collision) {
-        expect(collision.state).toBe("hide");
-      });
-    });
-  
+    expect(labelEngine.getShown().length).toBe(1000);
+
   });
 
-  it("overlapping labels should all be hidden except the one with the highest weight", function(){
+  it("overlapping labels should all be hidden except the one with the highest weight (1000 labels)", function(){
    
     var hideLabel = function(){ return false; };
     var showLabel = function(){ return true; };
@@ -330,7 +322,7 @@ describe("labelgun", function() {
       labelEngine.ingestLabel(
         boundingBox,
         i, //id
-        i, // Weight
+        parseInt(Math.random() * (100 - 1) + 1), // Weight
         {}, // label object
         "Test",
         false
@@ -342,16 +334,48 @@ describe("labelgun", function() {
 
     expect(labelEngine.tree.all().length).toBe(n);
     expect(Object.keys(labelEngine.allLabels).length).toBe(n);
-    expect(labelEngine.getShown().length).toBe(1);
-  
-    for (var key in labelEngine.allLabels) {
-      var label = labelEngine.allLabels[key];
-      if (label.id === i - 1) {
-        expect(label.state).toBe("show");
-      } else {
-        expect(label.state).toBe("hide");
-      }
+    var shownLabels = labelEngine.getShown();
+    expect(shownLabels.length).toBe(1);
+    expect(shownLabels[0].state).toBe("show");
+    labelEngine.getHidden().forEach(function(label) {
+      expect(label.state).toBe("hide");
+    });
+
+  });
+
+
+  it("intermittently overlapping labels should be shown and hidden correctly (1000 labels)", function(){
+   
+    var hideLabel = function(){ return false; };
+    var showLabel = function(){ return true; };
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+    var boundingBox; 
+    var n = 1000;
+
+    for (var i=0; i < n; i++) {
+        
+      boundingBox = {
+        bottomLeft : [i, i],
+        topRight   : [1 + i, 1 + i]
+      };
+
+      labelEngine.ingestLabel(
+        boundingBox,
+        i, //id
+        1, // Weight
+        {}, // label object
+        "Test",
+        false
+      );
+
     }
+
+    labelEngine.update();
+
+    expect(labelEngine.tree.all().length).toBe(n);
+    expect(Object.keys(labelEngine.allLabels).length).toBe(n);
+    expect(labelEngine.getShown().length).toBe(500);
+    expect(labelEngine.getHidden().length).toBe(500);
 
   });
 
