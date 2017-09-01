@@ -248,6 +248,7 @@ class labelgun {
     this.allChanged = true;
     this.setupLabelStates();
     this._handlePreviousCollisions();
+    this._hideShownCollisions();
     this.callLabelCallbacks();
 
   }
