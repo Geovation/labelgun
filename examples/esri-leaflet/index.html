@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset=utf-8 />
+    <title>Esri Leaflet Debugging Sample</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <!-- Load Leaflet from CDN-->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js"></script>
+
+  <!-- Load Esri Leaflet from CDN -->
+  <script src="https://unpkg.com/esri-leaflet@2.0.7"></script>
+
+    <script src="https://unpkg.com/rbush@2.0.1/rbush.min.js"></script>
+    <script src="https://unpkg.com/labelgun@4.0.2/lib/labelgun.js"></script>
+
+    <style>
+      body {
+        margin:0;
+        padding:0;
+      }
+
+      #map {
+        position: absolute;
+        top:0;
+        bottom:0;
+        right:0;left:0;
+      }
+
+      #info-pane {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+        padding: 1em;
+        background: white;
+      }
+    </style>
+  </head>
+  <body>
+
+  <div id="map"></div>
+  <div id="info-pane" class="leaflet-bar">
+    <label>
+    labeling highest population states
+    </label>
+  </div>
+
+  <script>
+    // https://geovation.github.io/labelgun/leaflet/index.html
+    var map = L.map('map').setView([40, -100], 4);
+    L.esri.basemapLayer('Topographic').addTo(map);
+
+    // Labelgun!
+    var hideLabel = function(label){ label.labelObject.style.opacity = 0;};
+    var showLabel = function(label){ label.labelObject.style.opacity = 1;};
+
+    labelEngine = new labelgun.default(hideLabel, showLabel);
+
+    var labels = [];
+    var totalMarkers = 0;
+
+    var fl = L.esri.featureLayer({
+      url:'http://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3',
+      onEachFeature: function (feature, layer) {
+        layer.bindTooltip(feature.properties.STATE_NAME, { permanent: true });
+        labels.push(layer);
+        totalMarkers += 1;
+      }
+    }).addTo(map);
+
+    fl.on('load', function () {
+      // map.fitBounds(fl.getBounds());
+      labelEngine.destroy();
+      for (id in fl._layers) {
+        var layer = fl._layers[id];
+        // layer.added = true;
+        var priority = calculateLabelWeight(layer.feature.properties.POP2007)
+        addLabel(layer, layer.feature.id, priority);
+      }
+      labelEngine.update();
+    })
+
+    function addLabel(layer, id, weight) {
+      var label = layer.getTooltip()._source._tooltip._container;
+      if (label) {
+        var rect = label.getBoundingClientRect();
+
+        var bottomLeft = map.containerPointToLatLng([rect.left, rect.bottom]);
+        var topRight = map.containerPointToLatLng([rect.right, rect.top]);
+        var boundingBox = {
+            bottomLeft : [bottomLeft.lng, bottomLeft.lat],
+            topRight   : [topRight.lng, topRight.lat]
+        };
+
+        labelEngine.ingestLabel(
+          boundingBox,
+          id,
+          weight,
+          label,
+          layer.feature.properties.STATE_NAME,
+          false
+        )
+        if (!layer.added) {
+          layer.addTo(map);
+          // layer.added = true;
+        }
+      }
+    }
+
+    function calculateLabelWeight (pop) {
+      switch (true) {
+        case (pop > 20000000):
+          return 4
+        case (pop > 10000000):
+          return 3
+        case (pop > 1000000):
+          return 2
+        default:
+          return 1
+      }
+    }
+  </script>
+
+  </body>
+  </html>
