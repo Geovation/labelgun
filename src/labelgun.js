@@ -34,8 +34,8 @@ class labelgun {
    * @private
    */
   _total(state) {
-    var total = 0;
-    for (var keys in this.allLabels) {
+    let total = 0;
+    for (let keys in this.allLabels) {
       if (this.allLabels[keys].state == state) {
         total += 1;
       }
@@ -77,8 +77,8 @@ class labelgun {
    * @private
    */
   _getLabelsByState(state) {
-    var labels = [];
-    for (var keys in this.allLabels) {
+    const labels = [];
+    for (let keys in this.allLabels) {
       if (this.allLabels[keys].state == state) {
         labels.push(this.allLabels[keys]);
       }
@@ -117,13 +117,26 @@ class labelgun {
    * @returns {array} The list of collisions
    */
   getCollisions(id) {
-    var label = this.allLabels[id];
-    var collisions =  this.tree.search(label);
-    var self = collisions.indexOf(label);
 
-    // Remove the label if it's colliding with itself
-    if (self !== undefined) collisions.splice(self, 1);
-    return collisions;
+    // TODO: For some reason the id sometimes comes through as the 
+    // whole object? How is that even possible? Babel bug?
+
+    if (typeof id === "number" || typeof id === "string") {
+      const label = this.allLabels[id];
+      if (!label) {
+        throw Error("Label doesn't exist :" + JSON.stringify(id));
+      }
+
+      const collisions =  this.tree.search(label);
+      const self = collisions.indexOf(label);
+
+      // Remove the label if it's colliding with itself
+      if (self !== undefined) collisions.splice(self, 1);
+      return collisions;
+    } 
+
+    return [];
+
   }
 
   /**
@@ -193,9 +206,10 @@ class labelgun {
       this._resetTree();
 
       Object.keys(this.allLabels).forEach((id) => {
-        
+
         const label = this.allLabels[id];
- 
+        //console.log(label.id);
+
         this.ingestLabel(
           {
             bottomLeft: [label.minX, label.minY],
@@ -207,7 +221,7 @@ class labelgun {
           label.name,
           label.isDragged
         );
-
+        
       });
 
     }
@@ -217,18 +231,20 @@ class labelgun {
       changed.forEach(id => {
 
         const label = this.allLabels[id];
-
-        this.ingestLabel(
-          {
-            bottomLeft: [label.minX, label.minY],
-            topRight: [label.maxX, label.maxY]
-          },
-          label.id,
-          label.weight,
-          label.labelObject,
-          label.name,
-          label.isDragged
-        );
+        if (label) {
+          this.ingestLabel(
+            {
+              bottomLeft: [label.minX, label.minY],
+              topRight: [label.maxX, label.maxY]
+            },
+            label.id,
+            label.weight,
+            label.labelObject,
+            label.name,
+            label.isDragged
+          );
+        }
+        
 
       });
 
@@ -268,7 +284,7 @@ class labelgun {
         let stillCollides = false;
         const hiddenLabels = this.tree.search(hidden);
 
-        for (var i=0; i < hiddenLabels.length; i++){
+        for (let i=0; i < hiddenLabels.length; i++){
           if (hiddenLabels[i].state !== "hide") {
             stillCollides = true;
             break;
@@ -295,40 +311,6 @@ class labelgun {
     this.tree.clear();
   }
 
-  /**
-   * @name _makeLabel
-   * @memberof labelgun
-   * @method
-   * @param {object} boundingBox - The bounding box object with bottomLeft and topRight properties
-   * @param {string} id - The idea of the label
-   * @param {number} weight - The weight to calculate in the collision resolution
-   * @param {object} labelObject - The object representing the actual label object from your mapping library
-   * @param {string} labelName - A string depicting the name of the label
-   * @param {boolean} isDragged - A flag to say whether the lable is being dragged
-   * @summary Creates a standard label object with a default state
-   * @returns {object} The label object 
-   * @private
-   */
-  _makeLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
-    
-    if (weight === undefined || weight === null) {
-      weight = 0;
-    }
-
-    return {
-      minX: boundingBox.bottomLeft[0],
-      minY: boundingBox.bottomLeft[1],
-      maxX: boundingBox.topRight[0],
-      maxY: boundingBox.topRight[1],
-      state: "hide",
-      id : id,
-      weight: weight,
-      labelObject : labelObject,
-      name : labelName,
-      isDragged : isDragged
-    };
-
-  }
 
   /**
    * @name _removeFromTree
@@ -341,7 +323,7 @@ class labelgun {
    * @private
    */
   _removeFromTree(label, forceUpdate) {
-    const id = label.id || label;
+    const id = label.id;
     const removelLabel = this.allLabels[id];
     this.tree.remove(removelLabel);
     delete this.allLabels[id];
@@ -429,16 +411,40 @@ class labelgun {
    */
   ingestLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
 
+    // Add the new label to the tree
+    if (weight === undefined || weight === null) {
+      weight = 0;
+    } 
+
+    if (!boundingBox || !boundingBox.bottomLeft || !boundingBox.topRight) {
+      throw Error("Bounding box must be defined with bottomLeft and topRight properties");
+    }
+
+    if (typeof id !== "string" && typeof id !== "number") {
+      throw Error("Label IDs must be a string or a number");
+    }
+
     // If there is already a label in the tree, remove it
     const oldLabel = this.allLabels[id];
     if (oldLabel) this._removeFromTree(oldLabel);
 
-    // Add the new label to the tree
-    const label = this._makeLabel(boundingBox, id, weight, labelObject, labelName, isDragged);
+    const label = {
+      minX: boundingBox.bottomLeft[0],
+      minY: boundingBox.bottomLeft[1],
+      maxX: boundingBox.topRight[0],
+      maxY: boundingBox.topRight[1],
+      state: "hide",
+      id : id,
+      weight: weight,
+      labelObject : labelObject,
+      name : labelName,
+      isDragged : isDragged
+    };
+
     this._addToTree(label);
 
     // Get all of its collisions
-    var collisions = this.getCollisions(id);
+    const collisions = this.getCollisions(id);
 
     // If the collisions are non existance we can show it
     if (!collisions.length) {

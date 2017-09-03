@@ -20,6 +20,17 @@ describe("labelgun", function() {
 
   });
 
+  it("should accept hide and show functions in constructor", function(){
+
+    var hideLabel = function(){ return false; };
+    var showLabel = function(){ return true; };
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+
+    expect(labelEngine.hideLabel()).toBe(false);
+    expect(labelEngine.showLabel()).toBe(true); 
+
+  });
+
   it("should ingest a single label", function(){
    
     var hideLabel = function(){ return false; };
@@ -376,6 +387,53 @@ describe("labelgun", function() {
     expect(Object.keys(labelEngine.allLabels).length).toBe(n);
     expect(labelEngine.getShown().length).toBe(500);
     expect(labelEngine.getHidden().length).toBe(500);
+
+  });
+
+  it("randomly overlapping labels should always have the correct state (1000 labels)", function(){
+   
+    var hideLabel = function(){ return false; };
+    var showLabel = function(){ return true; };
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+    var boundingBox; 
+    var n = 1000;
+
+    for (var i=0; i < n; i++) {
+      
+      var randPos = parseInt(Math.random() * 10);
+
+      boundingBox = {
+        bottomLeft : [randPos, randPos],
+        topRight   : [1 + randPos, 1 + randPos]
+      };
+
+      labelEngine.ingestLabel(
+        boundingBox,
+        i, //id
+        1, // Weight
+        {}, // label object
+        "Test " + i,
+        false
+      );
+
+    }
+
+    labelEngine.update();
+    var shown = labelEngine.getShown();
+    shown.forEach(function(label){
+      expect(label.state).toBe("show");
+    });
+    shown.forEach(function(label){
+      expect(typeof(label)).toBe("object");
+      labelEngine.getCollisions(label).forEach(function(collidedLabel) {
+        expect(typeof(collidedLabel)).toBe("object");
+        expect(collidedLabel.state).toBe("hide");
+      });
+    });
+
+    labelEngine.getHidden().forEach(function(label){
+      expect(label.state).toBe("hide");
+    });
 
   });
 
