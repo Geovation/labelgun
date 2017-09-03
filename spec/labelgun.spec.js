@@ -396,11 +396,11 @@ describe("labelgun", function() {
     var showLabel = function(){ return true; };
     var labelEngine = new labelgun.default(hideLabel, showLabel);
     var boundingBox; 
-    var n = 1000;
+    var n = 2000;
 
     for (var i=0; i < n; i++) {
       
-      var randPos = parseInt(Math.random() * 10);
+      var randPos = Math.random() * 10;
 
       boundingBox = {
         bottomLeft : [randPos, randPos],
@@ -425,7 +425,9 @@ describe("labelgun", function() {
     });
     shown.forEach(function(label){
       expect(typeof(label)).toBe("object");
-      labelEngine.getCollisions(label).forEach(function(collidedLabel) {
+      expect(typeof(label.id)).toBe("number");
+
+      labelEngine.getCollisions(label.id).forEach(function(collidedLabel) {
         expect(typeof(collidedLabel)).toBe("object");
         expect(collidedLabel.state).toBe("hide");
       });

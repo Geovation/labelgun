@@ -118,24 +118,17 @@ class labelgun {
    */
   getCollisions(id) {
 
-    // TODO: For some reason the id sometimes comes through as the 
-    // whole object? How is that even possible? Babel bug?
+    const label = this.allLabels[id];
+    if (label === undefined) {
+      throw Error("Label doesn't exist :" + JSON.stringify(id));
+    }
 
-    if (typeof id === "number" || typeof id === "string") {
-      const label = this.allLabels[id];
-      if (!label) {
-        throw Error("Label doesn't exist :" + JSON.stringify(id));
-      }
+    const collisions =  this.tree.search(label);
+    const self = collisions.indexOf(label);
 
-      const collisions =  this.tree.search(label);
-      const self = collisions.indexOf(label);
-
-      // Remove the label if it's colliding with itself
-      if (self !== undefined) collisions.splice(self, 1);
-      return collisions;
-    } 
-
-    return [];
+    // Remove the label if it's colliding with itself
+    if (self !== undefined) collisions.splice(self, 1);
+    return collisions;
 
   }
 
@@ -172,8 +165,8 @@ class labelgun {
    * @returns {undefined}
    */
   callLabelCallbacks(forceState) {
-    this.tree.all().forEach(label => {
-      this._callLabelStateCallback(label, forceState);
+    Object.keys(this.allLabels).forEach(id => {
+      this._callLabelStateCallback(this.allLabels[id], forceState);
     });
   }
 
@@ -189,6 +182,47 @@ class labelgun {
     const state = forceState || label.state;
     if (state === "show") this.showLabel(label);
     if (state === "hide") this.hideLabel(label);
+  }
+
+  calculate() {
+
+    const highest = Object.values(this.allLabels).sort(this.compare);
+
+    highest.forEach((label) => {
+
+      const collisions = this.tree.search(label);
+      const collisionsLower = this.allLower(collisions, label);
+
+      if (collisions.length === 0 || collisionsLower) {
+        this.allLabels[label.id].state = "show";
+      }
+
+    });
+
+  }
+
+  allLower(collisions, label) {
+    let lower = true;
+    for (let i = 0; i < collisions.length; i++) {
+      var currentlyShowing = collisions[i].state === "show";
+      var isLower = collisions[i].weight > label.weight;
+      if (currentlyShowing || isLower) {
+        lower = false;
+      }
+    }
+
+
+    return lower;
+  }
+
+
+  compare(a,b) {
+    // High to Low
+    if (a.weight > b.weight)
+      return -1;
+    if (a.weight < b.weight)
+      return 1;
+    return 0;
   }
 
   /**
@@ -263,8 +297,7 @@ class labelgun {
 
     this.allChanged = true;
     this.setupLabelStates();
-    this._handlePreviousCollisions();
-    this._hideShownCollisions();
+    this.calculate();
     this.callLabelCallbacks();
 
   }
@@ -281,19 +314,22 @@ class labelgun {
     this.getHidden().forEach(hidden => {
       if (hidden.state === "hide") {
 
-        let stillCollides = false;
         const hiddenLabels = this.tree.search(hidden);
 
-        for (let i=0; i < hiddenLabels.length; i++){
-          if (hiddenLabels[i].state !== "hide") {
-            stillCollides = true;
-            break;
-          }
-        }
-
-        if (!stillCollides) {
+        if (hiddenLabels.length === 0) {
           hidden.state = "show";
         }
+
+        // for (let i=0; i < hiddenLabels.length; i++){
+        //   if (hiddenLabels[i].state !== "hide") {
+        //     stillCollides = true;
+        //     break;
+        //   }
+        // }
+
+        // if (stillCollides === false) {
+        //   hidden.state = "show";
+        // }
 
       }
     });
@@ -340,6 +376,7 @@ class labelgun {
    * @private
    */
   _addToTree(label) {
+    if (label.id === undefined) throw Error("Label has no ID field : " + JSON.stringify(label))
     this.allLabels[label.id] = label;
     this.tree.insert(label);
   }
@@ -383,17 +420,16 @@ class labelgun {
       }
  
       if (collision.weight > highest.weight) {
-        highest.state = "hide";
         highest = collision;
-      } else {
-        collision.state = "hide";
-      }
+      } 
 
+      collision.state = "hide";
+      
     });
 
     highest.state = "show";
 
-    if (originalWeight) highest.weight = originalWeight;
+    if (originalWeight !== undefined) highest.weight = originalWeight;
   }
 
   /**
@@ -444,16 +480,18 @@ class labelgun {
     this._addToTree(label);
 
     // Get all of its collisions
+
     const collisions = this.getCollisions(id);
+    if (label.name === "Ohio") console.log(label.name, collisions)
 
     // If the collisions are non existance we can show it
-    if (!collisions.length) {
+    if (collisions.length === 0) {
       label.state = "show";
       return;
     }
 
     // Else we need to handle the collisions and decide which one to show
-    this._handleCollisions(collisions, label, isDragged);
+    //this._handleCollisions(collisions, label, isDragged);
 
   }
 
