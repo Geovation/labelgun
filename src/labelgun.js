@@ -267,7 +267,6 @@ class labelgun {
       Object.keys(this.allLabels).forEach((id) => {
 
         const label = this.allLabels[id];
-        //console.log(label.id);
 
         this.ingestLabel(
           {
