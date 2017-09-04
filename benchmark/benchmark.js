@@ -4,12 +4,12 @@ var labelgun = require("../lib/labelgun.min.js");
 
 var hideLabel = function(){ return false; };
 var showLabel = function(){ return true; };
-var iterations = 10;
+var iterations = 20;
 
 var start = new Date();
 
 for (var j=0; j < iterations; j++) {
-  var labelEngine = new labelgun.default(hideLabel, showLabel);
+  var labelEngine = new labelgun.default(hideLabel, showLabel, 12);
   var boundingBox;  
   var n = 1000;
 

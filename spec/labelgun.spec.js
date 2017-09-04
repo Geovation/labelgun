@@ -96,8 +96,8 @@ describe("labelgun", function() {
     for (var i=0; i < 10; i++) {
       
       boundingBox = {
-        bottomLeft : [i, i],
-        topRight   : [i + 1.0, i + 1.0]
+        bottomLeft : [1, 1],
+        topRight   : [1, 1]
       };
 
       labelEngine.ingestLabel(
@@ -111,13 +111,14 @@ describe("labelgun", function() {
 
     }
 
+    labelEngine.update();
+
     expect(labelEngine.totalShown()).toBe(1);
     expect(labelEngine.totalHidden()).toBe(9);
 
   });
 
-
-  it("should return the total shown and hidden correctly", function(){
+  it("should return the all shown (getShown) and hidden (getHidden) correctly", function(){
    
     var hideLabel = function(){ return false; };
     var showLabel = function(){ return true; };
@@ -127,8 +128,8 @@ describe("labelgun", function() {
     for (var i=0; i < 10; i++) {
       
       boundingBox = {
-        bottomLeft : [i, i],
-        topRight   : [i + 1.0, i + 1.0]
+        bottomLeft : [1, 1],
+        topRight   : [1, 1]
       };
 
       labelEngine.ingestLabel(
@@ -141,6 +142,8 @@ describe("labelgun", function() {
       );
 
     }
+
+    labelEngine.update();
 
     expect(labelEngine.getShown().length).toBe(1);
     expect(labelEngine.getHidden().length).toBe(9);
@@ -233,6 +236,8 @@ describe("labelgun", function() {
       );
 
     }
+
+    labelEngine.update();
 
     expect(labelEngine.tree.all().length).toBe(10);
     expect(Object.keys(labelEngine.allLabels).length).toBe(10);
@@ -439,7 +444,7 @@ describe("labelgun", function() {
 
   });
 
-  it("dragged labels should always be shown over none dragged", function(){
+  it("dragged labels should always be shown over un-dragged", function(){
    
     var hideLabel = function(){ return false; };
     var showLabel = function(){ return true; };
@@ -532,6 +537,7 @@ describe("labelgun", function() {
     expect(labelEngine.hasChanged.size).toBe(1);
 
     labelEngine.setupLabelStates();
+    labelEngine.compareLabels();
 
     expect(labelEngine.getShown().length).toBe(1);
     expect(typeof(labelEngine.getShown()[0])).toBe("object");

@@ -6,14 +6,14 @@
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
     <!-- Load Leaflet from CDN-->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet-src.js"></script>
 
   <!-- Load Esri Leaflet from CDN -->
-  <script src="https://unpkg.com/esri-leaflet@2.0.7"></script>
+  <script src="https://unpkg.com/esri-leaflet@2.1.1"></script>
 
     <script src="https://unpkg.com/rbush@2.0.1/rbush.min.js"></script>
-    <script src="../../../lib/labelgun.js"></script>
+    <script src="https://unpkg.com/labelgun@4.0.3/lib/labelgun.min.js"></script>
 
     <style>
       body {
@@ -56,7 +56,7 @@
     var hideLabel = function(label){ label.labelObject.style.opacity = 0;};
     var showLabel = function(label){ label.labelObject.style.opacity = 1;};
 
-    labelEngine = new labelgun.default(hideLabel, showLabel);
+    labelEngine = new labelgun.default(hideLabel, showLabel, 12);
 
     var labels = [];
     var totalMarkers = 0;
