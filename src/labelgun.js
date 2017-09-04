@@ -1,8 +1,6 @@
 
 import rbush from "rbush";
 
-export default 
-
 /**
 * @summary create a label gun instance with a hide and show label callback
 * @param {function} hideLabel the function responsible for hiding the label on hide event
@@ -27,6 +25,7 @@ class labelgun {
   /**
    * @name _total
    * @summary get the total hidden or shown labels in the tree
+   * @memberof labelgun.prototype
    * @param {string} state whether to return 'hide' or 'show' state label totals
    * @returns {number} total number of labels of that state
    * @private
@@ -161,6 +160,7 @@ class labelgun {
    * @summary Perform the related callback for a label depending on where its state is 'show' or 'hide'
    * @param {string} [forceState] - the class of which to change the label to
    * @returns {undefined}
+   * @public
    */
   callLabelCallbacks(forceState) {
     Object.keys(this.allLabels).forEach(id => {
@@ -188,7 +188,6 @@ class labelgun {
   * @method
   * @summary Calculates which labels should show and which should hide
   * @returns {undefined}
-  * @public
   */
   compareLabels() {
 
@@ -423,4 +422,6 @@ class labelgun {
   }
 
 }
+
+export default labelgun;
 
