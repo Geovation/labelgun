@@ -109,17 +109,17 @@ function createLabel(geojsonFeature){
   var labelWidth = getTextWidth(text, labelFontStyle) + xPadding;
   var fillColor = "rgba(255, 255, 255, 0.85)";
   var iconSVG = "<svg " +
-                        "version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
-                        "x=\"0px\" y=\"0px\" width=\"" + labelWidth + "px\" height=\""+labelHeight+"px\" " +
-                        "viewBox=\"0 0 " + labelWidth + " "+labelHeight+"\" " +
-                        "enable-background=\"new 0 0 " + labelWidth + " "+labelHeight+"\" >"+
-                        "<g>" +
-                        "<rect x=\"0\" y=\"0\" width=\"" + labelWidth + "\" height=\""+labelHeight+"\" stroke=\"#000000\" fill=\"" + fillColor + "\" stroke-width=\"2\"></rect>" +
-                        "<text x=\"5\" y=\"14\" fill=\"#000000\" font-family=\"Arial\" font-size=\""+labelFontSize+"\" font-weight=\"normal\">" +
-                            _.escape(text) +  // We need to escape all the special characters like & etc
-                        "</text>" +
-                        "</g>" +
-                    "</svg>";
+                    "version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
+                    "x=\"0px\" y=\"0px\" width=\"" + labelWidth + "px\" height=\""+labelHeight+"px\" " +
+                    "viewBox=\"0 0 " + labelWidth + " "+labelHeight+"\" " +
+                    "enable-background=\"new 0 0 " + labelWidth + " "+labelHeight+"\" >"+
+                    "<g>" +
+                    "<rect x=\"0\" y=\"0\" width=\"" + labelWidth + "\" height=\""+labelHeight+"\" stroke=\"#000000\" fill=\"" + fillColor + "\" stroke-width=\"2\"></rect>" +
+                    "<text x=\"5\" y=\"14\" fill=\"#000000\" font-family=\"Arial\" font-size=\""+labelFontSize+"\" font-weight=\"normal\">" +
+                        _.escape(text) +  // We need to escape all the special characters like & etc
+                    "</text>" +
+                    "</g>" +
+                "</svg>";
 
   var svgURI = encodeURIComponent(iconSVG);
   var src = "data:image/svg+xml;charset=utf-8," + svgURI;
@@ -158,8 +158,8 @@ function getLabel(geojsonFeature) {
 function getBoundingBox(center, labelWidth) {
 
   var pixelCenter = map.getPixelFromCoordinate(center);
-  //console.log(pixelCenter);
   var buffer = 1;
+  
   // XY starts from the top right corner of the screen
   var bl = [pixelCenter[0] - labelWidth + buffer, pixelCenter[1] + labelHeight + buffer] ;
   var tr = [pixelCenter[0] + labelWidth + buffer, pixelCenter[1] - labelHeight + buffer];
