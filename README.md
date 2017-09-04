@@ -26,7 +26,7 @@ Or if you're using `yarn`:
 
 You can also use a auto-generated CDN thanks to unpkg :
 
-`https://unpkg.com/labelgun@4.0.3/lib/labelgun.js`
+`https://unpkg.com/labelgun@5.0.0/lib/labelgun.js`
 
 ### Docs and Demos
 
