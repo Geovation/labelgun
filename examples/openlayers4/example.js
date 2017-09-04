@@ -58,12 +58,10 @@ cupcakesLayer.on("postcompose", function() {
 });
 
 function hideLabel(label) {
-  console.log("hideLabel", label);
   label.labelObject.getImage().setOpacity(0.0);
 }
 
 function showLabel(label) {
-  console.log("showLabel", label);
   label.labelObject.getImage().setOpacity(1);
 }
 
