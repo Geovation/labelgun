@@ -62,7 +62,7 @@
     var totalMarkers = 0;
 
     var fl = L.esri.featureLayer({
-      url:'http://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3',
+      url:'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3',
       onEachFeature: function (feature, layer) {
         layer.bindTooltip(feature.properties.STATE_NAME, { permanent: true });
         labels.push(layer);
