@@ -11,7 +11,7 @@
     "build": "webpack",
     "build-prod": "webpack --env.minified",
     "build-both": "webpack && webpack --env.minified",
-    "benchmark" : "node ./benchmark/benchmark.js",
+    "benchmark": "node ./benchmark/benchmark.js",
     "doc": "jsdoc src/labelgun.js --destination docs/documentation --pedantic",
     "doc-deploy": "npm run doc && git add docs && git commit -m 'Updated docs' && git push origin --delete gh-pages && git subtree push --prefix docs/ origin gh-pages"
   },

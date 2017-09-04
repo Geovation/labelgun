@@ -372,6 +372,7 @@ class labelgun {
    * @param {boolean} isDragged - A flag to say whether the lable is being dragged
    * @summary Creates a label if it does not already exist, then adds it to the tree, and renders it based on whether it can be shown
    * @returns {undefined} 
+   * @public
    */
   ingestLabel(boundingBox, id, weight, labelObject, labelName, isDragged) {
 
