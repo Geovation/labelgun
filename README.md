@@ -83,6 +83,7 @@ NPM updating:
 
 - [Vroom](http://vroom-project.org/) - Vehicle routing optimisation software
 - [OL Mapbox Style](https://github.com/boundlessgeo/ol-mapbox-style) - Use Mapbox Style objects with OpenLayers
+- [qgis2web](https://github.com/tomchadwin/qgis2web) - A QGIS plugin to export a map to an OpenLayers/Leaflet webmap
 
 Using Labelgun? Open a pull request and let us know!
 
