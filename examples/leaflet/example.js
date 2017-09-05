@@ -46,21 +46,23 @@ markers.eachLayer(function(label){
 markers.addTo(map);
 
 map.on("zoomend", function(){
-  resetLabels(markers);
+  resetLabels([markers]);
 });
 map.fitBounds(markers.getBounds());
 
 var cover = document.getElementById("cover");
 cover.parentNode.removeChild(cover);
-resetLabels(markers);
+resetLabels([markers]);
 
 function resetLabels(markers) {
 
   labelEngine.destroy();
   var i = 0;
-  markers.eachLayer(function(label){
-    addLabel(label, ++i);
-  });
+  for (var j = 0; j < markers.length; j++) {
+    markers[j].eachLayer(function(label){
+      addLabel(label, ++i);
+    });
+  }
   labelEngine.update();
 
 }
