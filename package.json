@@ -1,6 +1,6 @@
 {
   "name": "labelgun",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "A mapping library agnostic labelling engine",
   "main": "lib/labelgun.js",
   "scripts": {

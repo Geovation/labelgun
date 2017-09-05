@@ -15,7 +15,7 @@ class labelgun {
     const usedEntries = entries || 10;
     this.tree = rbush(usedEntries);
     this.allLabels = {};
-    this.hasChanged = new Set();
+    this.hasChanged = [];
     this.allChanged = false;
     this.hideLabel = hideLabel;
     this.showLabel = showLabel;
@@ -192,10 +192,11 @@ class labelgun {
   compareLabels() {
 
     this.orderedLabels = Object.values(this.allLabels).sort(this._compare);
-    
+ 
     this.orderedLabels.forEach((label) => {
 
       const collisions = this.tree.search(label);
+      
       if (collisions.length === 0 || this._allLower(collisions, label) || label.isDragged) {
         this.allLabels[label.id].state = "show";
       }
@@ -259,55 +260,54 @@ class labelgun {
   setupLabelStates() {
 
     if(this.allChanged) {
+
       this.allChanged = false;
-      this.hasChanged.clear();
+      this.hasChanged = [];
       this.tree.clear();
 
       Object.keys(this.allLabels).forEach((id) => {
-
-        const label = this.allLabels[id];
-
-        this.ingestLabel(
-          {
-            bottomLeft: [label.minX, label.minY],
-            topRight: [label.maxX, label.maxY]
-          },
-          label.id,
-          label.weight,
-          label.labelObject,
-          label.name,
-          label.isDragged
-        );
-        
+        this._handleLabelIngestion(id);
       });
 
     }
-    else if(this.hasChanged.size) {
-      const changed = [...this.hasChanged];
-      this.hasChanged.clear();
-      changed.forEach(id => {
+    else if(this.hasChanged.length > 0) {
 
-        const label = this.allLabels[id];
-        if (label) {
-          this.ingestLabel(
-            {
-              bottomLeft: [label.minX, label.minY],
-              topRight: [label.maxX, label.maxY]
-            },
-            label.id,
-            label.weight,
-            label.labelObject,
-            label.name,
-            label.isDragged
-          );
-        }
-        
-
+      this.hasChanged .forEach(id => {
+        this._handleLabelIngestion(id);
       });
+
+      this.hasChanged = [];
 
     }
 
   }
+
+  /**
+   * @name _handleLabelIngestion
+   * @memberof labelgun
+   * @method
+   * @summary DRY function for ingesting labels
+   * @returns {undefined}
+   * @param {string} id - ID of the label to ingest
+   * @private
+   */
+  _handleLabelIngestion(id) {
+    const label = this.allLabels[id];
+        
+    this.ingestLabel(
+      {
+        bottomLeft: [label.minX, label.minY],
+        topRight: [label.maxX, label.maxY]
+      },
+      label.id,
+      label.weight,
+      label.labelObject,
+      label.name,
+      label.isDragged
+    );
+  }
+
+
 
   /**
    * @name update
@@ -418,7 +418,9 @@ class labelgun {
    * @returns {undefined}
    */
   labelHasChanged(id) {
-    this.hasChanged.add(id);
+    if (this.hasChanged.indexOf(id) === -1) {
+      this.hasChanged.push(id);
+    }
   }
 
 }

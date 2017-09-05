@@ -534,7 +534,7 @@ describe("labelgun", function() {
 
     labelEngine.allLabels[5].weight = 1000;
     labelEngine.labelHasChanged(5);
-    expect(labelEngine.hasChanged.size).toBe(1);
+    expect(labelEngine.hasChanged.length).toBe(1);
 
     labelEngine.setupLabelStates();
     labelEngine.compareLabels();
@@ -542,6 +542,55 @@ describe("labelgun", function() {
     expect(labelEngine.getShown().length).toBe(1);
     expect(typeof(labelEngine.getShown()[0])).toBe("object");
     expect(labelEngine.getShown()[0].id).toBe(5);
+
+  });
+
+
+  it("should allow for setting multiple labels as changed", function(){
+   
+    var hideLabel = function(){ return false; };
+    var showLabel = function(){ return true; };
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+    var boundingBox; 
+    var n = 20;
+
+    for (var i = 0; i < n; i++) {
+
+      if (i > 10) {
+        boundingBox = {
+          bottomLeft : [10, 10],
+          topRight   : [11, 11]
+        };
+      } else {
+        boundingBox = {
+          bottomLeft : [0, 0],
+          topRight   : [1, 1]
+        };
+      }
+
+      labelEngine.ingestLabel(
+        boundingBox,
+        i, //id
+        1, // Weight
+        {}, // label object
+        "Test",
+        false
+      );
+
+    }
+
+    labelEngine.allLabels[5].weight = 1000;
+    labelEngine.allLabels[14].weight = 500;
+    labelEngine.labelHasChanged(5);
+    labelEngine.labelHasChanged(14);
+    expect(labelEngine.hasChanged.length).toBe(2);
+
+    labelEngine.setupLabelStates();
+    labelEngine.compareLabels();
+
+    expect(labelEngine.getShown().length).toBe(2);
+    expect(typeof(labelEngine.getShown()[0])).toBe("object");
+    expect(typeof(labelEngine.getShown()[1])).toBe("object");
 
   });
 
