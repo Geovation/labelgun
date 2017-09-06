@@ -8,7 +8,7 @@ var labelEngine;
 
 // Leaflet map
 var map = L.map("map").setView([0, 0], 6);
-L.tileLayer("//tile.osm{s}..org/{z}/{x}/{y}.png", {
+L.tileLayer("//tile.osm.org/{z}/{x}/{y}.png", {
   attribution: "&copy; <a href=\"https://osm.org/copyright\">OpenStreetMap</a> contributors"
 }).addTo(map);
 
@@ -56,7 +56,6 @@ resetLabels(markers);
 
 function resetLabels(markers) {
 
-  labelEngine.destroy();
   var i = 0;
   markers.eachLayer(function(label){
     addLabel(label, ++i);

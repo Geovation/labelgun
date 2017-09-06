@@ -68,7 +68,7 @@ function showLabel(label) {
 function updateLabels(labels) {
 
   if (Object.keys(labelEngine.allLabels).length > 0) {
-    labelEngine.destroy();
+    labelEngine.reset();
   }
   labels.forEach(function(label, i) {
     var boundingBox = getBoundingBox(label.center, label.width);
