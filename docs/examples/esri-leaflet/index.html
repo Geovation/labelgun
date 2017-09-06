@@ -72,7 +72,7 @@
 
     fl.on('load', function () {
       // map.fitBounds(fl.getBounds());
-      labelEngine.destroy();
+      labelEngine.reset();
       for (id in fl._layers) {
         var layer = fl._layers[id];
         // layer.added = true;

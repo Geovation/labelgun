@@ -142,27 +142,29 @@ class labelgun {
   }
 
   /**
-   * @name destroy
+   * @name reset
    * @memberof labelgun
    * @method
    * @summary Destroy the collision tree and labels
    * @returns {undefined}
    */
-  destroy() {
+  reset() {
     this.tree.clear();
     this.allLabels = {};
+    this.hasChanged = [];
+    this.allChanged = false;
   }
 
   /**
-   * @name callLabelCallbacks
+   * @name _callLabelCallbacks
    * @memberof labelgun
    * @method
    * @summary Perform the related callback for a label depending on where its state is 'show' or 'hide'
    * @param {string} [forceState] - the class of which to change the label to
    * @returns {undefined}
-   * @public
+   * @private
    */
-  callLabelCallbacks(forceState) {
+  _callLabelCallbacks(forceState) {
     Object.keys(this.allLabels).forEach(id => {
       this._callLabelStateCallback(this.allLabels[id], forceState);
     });
@@ -183,15 +185,20 @@ class labelgun {
   }
 
   /**
-  * @name compareLabels
+  * @name _compareLabels
   * @memberof labelgun
   * @method
   * @summary Calculates which labels should show and which should hide
   * @returns {undefined}
+  * @private
   */
-  compareLabels() {
+  _compareLabels() {
 
-    this.orderedLabels = Object.values(this.allLabels).sort(this._compare);
+    // Map all the labels to an array and sort based on weight
+    // highest to lowest
+    this.orderedLabels = Object.keys(this.allLabels)
+      .map(v => this.allLabels[v])
+      .sort(this._compare);
  
     this.orderedLabels.forEach((label) => {
 
@@ -237,7 +244,7 @@ class labelgun {
    * @method
    * @param {object} a - First object to compare
    * @param {object} b - Second object to compare
-   * @summary Sets up the labels depending on whether all have changed or some have changed
+   * @summary Compares labels weights for sorting
    * @returns {number} - The sort value
    * @private
    */
@@ -251,13 +258,14 @@ class labelgun {
   }
 
   /**
-   * @name setupLabelStates
+   * @name _setupLabels
    * @memberof labelgun
    * @method
    * @summary Sets up the labels depending on whether all have changed or some have changed
    * @returns {undefined}
+   * @private
    */
-  setupLabelStates() {
+  _setupLabels() {
 
     if(this.allChanged) {
 
@@ -313,35 +321,36 @@ class labelgun {
    * @name update
    * @memberof labelgun
    * @method
-   * @summary Sets all labels to change and reruns the whole show/hide procedure
+   * @param {boolean} onlyChanges - Whether to only update the changes made by labelHasChanged
+   * @summary Sets all or some of the labels to change and reruns the whole show/hide procedure
    * @returns {undefined}
    */
-  update() {
+  update(onlyChanges) {
 
-    this.allChanged = true;
-    this.setupLabelStates();
-    this.compareLabels();
-    this.callLabelCallbacks();
+    if (onlyChanges) {
+      this.allChanged = false;
+    } else {
+      this.allChanged = true;
+    }
+    
+    this._setupLabels();
+    this._compareLabels();
+    this._callLabelCallbacks();
 
   }
 
   /**
-   * @name _removeFromTree
+   * @name removeLabel
    * @memberof labelgun
    * @method
-   * @param {object} label - The label to remove from the tree
-   * @param {boolean} forceUpdate if true, triggers all labels to be updated
-   * @summary Removes label from tree
+   * @param {object} id - The label id for the label to remove from the tree
+   * @summary Removes label from tree and allLabels object
    * @returns {undefined}
-   * @private
    */
-  _removeFromTree(label, forceUpdate) {
-    const id = label.id;
+  removeLabel(id) {
     const removelLabel = this.allLabels[id];
     this.tree.remove(removelLabel);
     delete this.allLabels[id];
-
-    if (forceUpdate) this.callLabelCallbacks(true);
   }
   
 
@@ -390,7 +399,7 @@ class labelgun {
 
     // If there is already a label in the tree, remove it
     const oldLabel = this.allLabels[id];
-    if (oldLabel) this._removeFromTree(oldLabel);
+    if (oldLabel) this.removeLabel(oldLabel.id);
 
     const label = {
       minX: boundingBox.bottomLeft[0],

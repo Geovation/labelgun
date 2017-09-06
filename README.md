@@ -30,7 +30,7 @@ You can also use a auto-generated CDN thanks to unpkg :
 
 ### Docs and Demos
 
-Check out the [docs and demos live here](http://tech.geovation.uk/labelgun/)
+Check out the [docs and demos live here](http://geovation.github.io/labelgun/)
 
 A nice interactive way to play with the demos locally is to use a hot reloading web server such as live-server:
 

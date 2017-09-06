@@ -45,7 +45,7 @@ describe("labelgun", function() {
     labelEngine.ingestLabel(
       boundingBox,
       0, //id
-      parseInt(Math.random() * (5 - 1) + 1), // Weight
+      1, // Weight
       {}, // label object
       "Test",
       false
@@ -53,6 +53,115 @@ describe("labelgun", function() {
 
     expect(labelEngine.tree.all().length).toBe(1);
     expect(Object.keys(labelEngine.allLabels).length).toBe(1);
+    
+  });
+
+  it("should fail if there is no bounding box", function(){
+   
+    var hideLabel = function(){ return false; };
+    var showLabel = function(){ return true; };
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+
+    var boundingBox = null;
+
+    expect(function(){
+      labelEngine.ingestLabel(
+        boundingBox,
+        0, //id
+        1, // Weight
+        {}, // label object
+        "Test",
+        false
+      );
+    }).toThrow(
+      new Error("Bounding box must be defined with bottomLeft and topRight properties")
+    );
+
+    expect(labelEngine.tree.all().length).toBe(0);
+    expect(Object.keys(labelEngine.allLabels).length).toBe(0);
+    
+  });
+
+  it("should fail if there is a bounding box but it is incorrectly defined", function(){
+   
+    var hideLabel = function(){ return false; };
+    var showLabel = function(){ return true; };
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+
+    var boundingBox = {
+      bottomLeft : null,
+      topRight   : null
+    };
+
+    expect(function(){
+      labelEngine.ingestLabel(
+        boundingBox,
+        0, //id
+        1, // Weight
+        {}, // label object
+        "Test",
+        false
+      );
+    }).toThrow(
+      new Error("Bounding box must be defined with bottomLeft and topRight properties")
+    );
+
+    expect(labelEngine.tree.all().length).toBe(0);
+    expect(Object.keys(labelEngine.allLabels).length).toBe(0);
+    
+  });
+
+  it("should remove a single label", function(){
+   
+    var hideLabel = function(){ return false; };
+    var showLabel = function(){ return true; };
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+
+    var boundingBox = {
+      bottomLeft : [0.0, 0.0],
+      topRight   : [1.0, 1.0]
+    };
+
+    labelEngine.ingestLabel(
+      boundingBox,
+      0, //id
+      1, // Weight
+      {}, // label object
+      "Test",
+      false
+    );
+
+    labelEngine.removeLabel(0);
+
+    expect(labelEngine.tree.all().length).toBe(0);
+    expect(Object.keys(labelEngine.allLabels).length).toBe(0);
+    
+  });
+
+  it("should allow for the getting of a single label", function(){
+   
+    var hideLabel = function(){ return false; };
+    var showLabel = function(){ return true; };
+    var labelEngine = new labelgun.default(hideLabel, showLabel);
+
+    var boundingBox = {
+      bottomLeft : [0.0, 0.0],
+      topRight   : [1.0, 1.0]
+    };
+
+    labelEngine.ingestLabel(
+      boundingBox,
+      0, //id
+      1, // Weight
+      {}, // label object
+      "Test",
+      false
+    );
+
+    expect(labelEngine.tree.all().length).toBe(1);
+    expect(Object.keys(labelEngine.allLabels).length).toBe(1);
+    expect(typeof labelEngine.getLabel(0)).toBe("object");
+    expect(labelEngine.getLabel(0).id).toBe(0);
     
   });
 
@@ -179,7 +288,7 @@ describe("labelgun", function() {
 
   });
 
-  it("should destroy labelgun data", function(){
+  it("should reset labelgun and its internal data (tree and label holding object)", function(){
    
     var hideLabel = function(){ return false; };
     var showLabel = function(){ return true; };
@@ -206,7 +315,7 @@ describe("labelgun", function() {
 
     expect(labelEngine.tree.all().length).toBe(10);
     expect(Object.keys(labelEngine.allLabels).length).toBe(10);
-    labelEngine.destroy();
+    labelEngine.reset();
     expect(Object.keys(labelEngine.allLabels).length).toBe(0);
     expect(labelEngine.tree.all().length).toBe(0);
   
@@ -536,8 +645,7 @@ describe("labelgun", function() {
     labelEngine.labelHasChanged(5);
     expect(labelEngine.hasChanged.length).toBe(1);
 
-    labelEngine.setupLabelStates();
-    labelEngine.compareLabels();
+    labelEngine.update(true);
 
     expect(labelEngine.getShown().length).toBe(1);
     expect(typeof(labelEngine.getShown()[0])).toBe("object");
@@ -585,8 +693,7 @@ describe("labelgun", function() {
     labelEngine.labelHasChanged(14);
     expect(labelEngine.hasChanged.length).toBe(2);
 
-    labelEngine.setupLabelStates();
-    labelEngine.compareLabels();
+    labelEngine.update(true);
 
     expect(labelEngine.getShown().length).toBe(2);
     expect(typeof(labelEngine.getShown()[0])).toBe("object");
