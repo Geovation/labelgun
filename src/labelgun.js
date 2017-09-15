@@ -32,8 +32,8 @@ class labelgun {
    */
   _total(state) {
     let total = 0;
-    for (var i = 0, keys = Object.keys(this.allLabels); i < keys.length; i++) {
-      if (this.allLabels[keys[i]].state == state) {
+    for (var key in this.allLabels) {
+      if (this.allLabels[key].state == state) {
         total += 1;
       }
     }
@@ -75,9 +75,9 @@ class labelgun {
    */
   _getLabelsByState(state) {
     const labels = [];
-    for (var i = 0, keys = Object.keys(this.allLabels); i < keys.length; i++) {
-      if (this.allLabels[keys[i]].state == state) {
-        labels.push(this.allLabels[keys[i]]);
+    for (var key in this.allLabels) {
+      if (this.allLabels[key].state == state) {
+        labels.push(this.allLabels[key]);
       }
     }
     return labels;
@@ -165,9 +165,9 @@ class labelgun {
    * @private
    */
   _callLabelCallbacks(forceState) {
-    Object.keys(this.allLabels).forEach(id => {
-      this._callLabelStateCallback(this.allLabels[id], forceState);
-    });
+    for(var key in this.allLabels) {
+      this._callLabelStateCallback(this.allLabels[key], forceState);
+    }
   }
 
   /**
@@ -196,15 +196,18 @@ class labelgun {
 
     // Map all the labels to an array and sort based on weight
     // highest to lowest
-    this.orderedLabels = Object.keys(this.allLabels)
-      .map(v => this.allLabels[v])
-      .sort(this._compare);
+
+    this.orderedLabels = [];
+    for(var key in this.allLabels) {
+      this.orderedLabels.push(this.allLabels[key]);
+    }
+    this.orderedLabels.sort(this._compare);
  
     this.orderedLabels.forEach((label) => {
 
       const collisions = this.tree.search(label);
       
-      if (collisions.length === 0 || this._allLower(collisions, label) || label.isDragged) {
+      if (collisions.length === 0 || label.isDragged || this._allLower(collisions, label)) {
         this.allLabels[label.id].state = "show";
       }
 
@@ -250,11 +253,7 @@ class labelgun {
    */
   _compare(a,b) {
     // High to Low
-    if (a.weight > b.weight)
-      return -1;
-    if (a.weight < b.weight)
-      return 1;
-    return 0;
+    return b.weight - a.weight;
   }
 
   /**
@@ -273,15 +272,20 @@ class labelgun {
       this.hasChanged = [];
       this.tree.clear();
 
-      Object.keys(this.allLabels).forEach((id) => {
-        this._handleLabelIngestion(id);
-      });
+      var labels = [];
+      for(var key in this.allLabels) {
+        this._handleLabelIngestion(key);
+        labels.push(this.allLabels[key]);
+      };
+
+      this.tree.load(labels);
 
     }
     else if(this.hasChanged.length > 0) {
 
-      this.hasChanged .forEach(id => {
+      this.hasChanged.forEach(id => {
         this._handleLabelIngestion(id);
+        this.tree.insert(this.allLabels[id]);
       });
 
       this.hasChanged = [];
@@ -343,29 +347,15 @@ class labelgun {
    * @name removeLabel
    * @memberof labelgun
    * @method
-   * @param {object} id - The label id for the label to remove from the tree
+   * @param {string} id - The label id for the label to remove from the tree
+   * @param {object} label - The label to remove from the tree
    * @summary Removes label from tree and allLabels object
    * @returns {undefined}
    */
-  removeLabel(id) {
-    const removelLabel = this.allLabels[id];
+  removeLabel(id, label) {
+    const removelLabel = label || this.allLabels[id];
     this.tree.remove(removelLabel);
     delete this.allLabels[id];
-  }
-  
-
-  /**
-   * @name _addToTree
-   * @memberof labelgun
-   * @method
-   * @param {object} label - The label to add to the tree
-   * @summary inserts label into tree
-   * @returns {undefined}
-   * @private
-   */
-  _addToTree(label) {
-    this.allLabels[label.id] = label;
-    this.tree.insert(label);
   }
 
   /**
@@ -399,7 +389,7 @@ class labelgun {
 
     // If there is already a label in the tree, remove it
     const oldLabel = this.allLabels[id];
-    if (oldLabel) this.removeLabel(oldLabel.id);
+    if (oldLabel) this.removeLabel(oldLabel.id, oldLabel);
 
     const label = {
       minX: boundingBox.bottomLeft[0],
@@ -414,7 +404,8 @@ class labelgun {
       isDragged : isDragged
     };
 
-    this._addToTree(label);
+    //We just store the label into the array. The tree is built when updated
+    this.allLabels[label.id] = label;
 
   }
 
