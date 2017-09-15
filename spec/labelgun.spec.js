@@ -51,6 +51,7 @@ describe("labelgun", function() {
       false
     );
 
+    labelEngine.update();
     expect(labelEngine.tree.all().length).toBe(1);
     expect(Object.keys(labelEngine.allLabels).length).toBe(1);
     
@@ -158,6 +159,7 @@ describe("labelgun", function() {
       false
     );
 
+    labelEngine.update();
     expect(labelEngine.tree.all().length).toBe(1);
     expect(Object.keys(labelEngine.allLabels).length).toBe(1);
     expect(typeof labelEngine.getLabel(0)).toBe("object");
@@ -190,6 +192,7 @@ describe("labelgun", function() {
 
     }
 
+    labelEngine.update();
     expect(labelEngine.tree.all().length).toBe(10);
     expect(Object.keys(labelEngine.allLabels).length).toBe(10);
   
@@ -284,6 +287,7 @@ describe("labelgun", function() {
 
     }
     
+    labelEngine.update();
     expect(labelEngine.getCollisions(0).length).toBe(1);
 
   });
@@ -313,6 +317,7 @@ describe("labelgun", function() {
 
     }
 
+    labelEngine.update();
     expect(labelEngine.tree.all().length).toBe(10);
     expect(Object.keys(labelEngine.allLabels).length).toBe(10);
     labelEngine.reset();
