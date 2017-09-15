@@ -32,7 +32,7 @@ class labelgun {
    */
   _total(state) {
     let total = 0;
-    for (var key in this.allLabels) {
+    for (let key in this.allLabels) {
       if (this.allLabels[key].state == state) {
         total += 1;
       }
@@ -75,7 +75,7 @@ class labelgun {
    */
   _getLabelsByState(state) {
     const labels = [];
-    for (var key in this.allLabels) {
+    for (let key in this.allLabels) {
       if (this.allLabels[key].state == state) {
         labels.push(this.allLabels[key]);
       }
@@ -165,7 +165,7 @@ class labelgun {
    * @private
    */
   _callLabelCallbacks(forceState) {
-    for(var key in this.allLabels) {
+    for(let key in this.allLabels) {
       this._callLabelStateCallback(this.allLabels[key], forceState);
     }
   }
@@ -198,7 +198,7 @@ class labelgun {
     // highest to lowest
 
     this.orderedLabels = [];
-    for(var key in this.allLabels) {
+    for(let key in this.allLabels) {
       this.orderedLabels.push(this.allLabels[key]);
     }
     this.orderedLabels.sort(this._compare);
@@ -272,11 +272,11 @@ class labelgun {
       this.hasChanged = [];
       this.tree.clear();
 
-      var labels = [];
-      for(var key in this.allLabels) {
+      let labels = [];
+      for(let key in this.allLabels) {
         this._handleLabelIngestion(key);
         labels.push(this.allLabels[key]);
-      };
+      }
 
       this.tree.load(labels);
 
@@ -353,8 +353,7 @@ class labelgun {
    * @returns {undefined}
    */
   removeLabel(id, label) {
-    const removelLabel = label || this.allLabels[id];
-    this.tree.remove(removelLabel);
+    this.tree.remove(label || this.allLabels[id]);
     delete this.allLabels[id];
   }
 

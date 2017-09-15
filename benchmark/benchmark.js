@@ -4,7 +4,7 @@ var labelgun = require("../lib/labelgun.min.js");
 
 var hideLabel = function(){ return false; };
 var showLabel = function(){ return true; };
-var iterations = 20;
+var iterations = 190;
 
 var start = new Date();
 
