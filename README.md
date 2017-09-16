@@ -11,11 +11,10 @@ The library makes three assumptions:
 * Each label has a weight
 * You can provide a function that will hide and show a label (e.g. changing a CSS class or calling a mapping library method)
 
-<br><br>
-
 <p align="center">
     <img alt="Labelgun example in leaflet" src="labelgun.gif">
 </p>
+<br>
 
 ## Using Labelgun
 
