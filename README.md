@@ -1,16 +1,21 @@
 ![labelgun](logo.png)
 
 </br>
+
+## What is Labelgun?
 Labelgun is a mapping library agnostic labelling engine. It allows you to avoid cluttering in mapping popups and labels, providing precedence to labels of your choice.
 
 The library makes three assumptions:
 
 * Each label has a bounding rectangle (Min X, Min Y, Max X, Max Y)
 * Each label has a weight
-* You can provide a function that will hide and show a label (e.g. through CSS class or JavaScript function)
+* You can provide a function that will hide and show a label (e.g. changing a CSS class or calling a mapping library method)
 
 <br><br>
-![Labelgun example in leaflet](labelgun.gif)
+
+<p align="center">
+    <img alt="Labelgun example in leaflet" src="labelgun.gif">
+</p>
 
 ## Using Labelgun
 
@@ -24,7 +29,7 @@ Or if you're using `yarn`:
 
 `yarn add labelgun`
 
-You can also use a auto-generated CDN thanks to unpkg :
+You can also use a auto-generated **CDN** thanks to unpkg :
 
 `https://unpkg.com/labelgun@6.0.0/lib/labelgun.js`
 
@@ -38,46 +43,9 @@ A nice interactive way to play with the demos locally is to use a hot reloading 
 
 `live-server`
 
-## Develop
+## Developing
 
-### Building
-
-We can install all the required dependencies using node and npm:
-
-`npm install`
-
-Labelgun is transpiled from ES6 using babel presets for Webpack 2. You can build the source using:
-
-`npm run build`
-
-or:
-
-`npm run build-prod`
-
-For the minified version. You can also watch the file with:
-
-`npm run watch`
-
-
-### Tests
-
-Labelgun uses Jasmine for testing. You can do an npm install and then use:
-
-`npm run test`
-
-at the command line. Tests are found in the `spec` folder. We can also run test coverage as so:
-
-`npm run coverage`
-
-### GitHub Pages & NPM
-
-GitHub pages documentation deployment:
-
-`npm deploy-doc`
-
-NPM updating:
-
-`npm publish`
+For instructions please see the [DEVELOPING](https://github.com/geovation/labelgun/blob/master/DEVELOPING.md) document.
 
 ## Users
 
