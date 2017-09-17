@@ -1,4 +1,28 @@
 
+    
+    var vectorPoints = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            url: "https://openlayers.org/en/v4.3.3/examples/data/geojson/point-samples.geojson",
+            format: new ol.format.GeoJSON()
+        }),
+        style: pointStyleFunction
+    });
+
+// Create the map 
+    var map = new ol.Map({
+        layers: [
+            new ol.layer.Tile({
+            source: new ol.source.OSM()
+            }),
+            vectorPoints
+        ],
+        target: "map",
+        view: new ol.View({
+            center: [-8351939, 6100000],
+            zoom: 6
+        })
+    });
+
     var labelEngine = new labelgun["default"](
         function(label){
             label.labelObject.hide = true;
@@ -8,7 +32,9 @@
         }
     );
 
+
     var createTextStyle = function(feature, resolution) {
+        console.log(feature.hide);
 
         if (feature.hide) {
             return new ol.style.Text(); 
@@ -43,26 +69,20 @@
         });
     }
 
-    var vectorPoints = new ol.layer.Vector({
-        source: new ol.source.Vector({
-            url: "https://openlayers.org/en/v4.3.3/examples/data/geojson/point-samples.geojson",
-            format: new ol.format.GeoJSON()
-        }),
-        style: pointStyleFunction
-    });
-
-    vectorPoints.on("postcompose", function() {
-        vectorPoints.getSource().getFeatures().forEach(function(feature){
+    function update() {
+        
+        var features = vectorPoints.getSource().getFeatures();
+        features.forEach(function(feature){
 
             // Get the label text as a string
             var text = feature.get("name");
 
             // Get the center point in pixel space
-            var center = ol.extent.getCenter(feature.getGeometry().getExtent())
+            var center = ol.extent.getCenter(feature.getGeometry().getExtent());
             var pixelCenter = map.getPixelFromCoordinate(center);
 
             var size = 12;
-            var halfText = size * (text.length / 4);
+            var halfText = (size + 1) * (text.length / 4);
 
             // Create a bounding box for the label using known pixel heights
             var minx = parseInt(pixelCenter[0] - halfText);
@@ -88,19 +108,13 @@
         // Call the label callbacks for showing and hiding
         labelEngine.update();
 
-    });
+    }
 
-    // Create the map 
-    var map = new ol.Map({
-        layers: [
-            new ol.layer.Tile({
-            source: new ol.source.OSM()
-            }),
-            vectorPoints
-        ],
-        target: "map",
-        view: new ol.View({
-            center: [-8351939, 6100000],
-            zoom: 8
-        })
+    // On end of zoom handle all the labels
+    vectorPoints.on("postcompose", update);
+
+    // Update on the first load
+    var listenerKey = vectorPoints.on('change', function(e) {
+        update();
+        ol.Observable.unByKey(listenerKey);   
     });
