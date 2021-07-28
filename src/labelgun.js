@@ -230,8 +230,8 @@ class labelgun {
     for (let i = 0; i < collisions.length; i++) {
       collision = collisions[i];
       if (
-        collision.state === "show" || 
-        collision.weight > label.weight || 
+        (collision.state === "show" &&
+          collision.weight >= label.weight) ||
         collision.isDragged
       ) {
         return false;
